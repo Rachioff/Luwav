@@ -14,6 +14,7 @@ pub struct Wave {
     pub shape: WaveShape,
 }
 
+// =============================================================================================================
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 enum WaveShape {
@@ -46,8 +47,6 @@ pub struct WaveContent {
 
 
 impl Tsunami {
-
-    // todo: 如果同路径下出现同名，抛出报错
     
     pub fn new(title: String, file_path: String) -> Self {
         let now = Local::now();
