@@ -6,11 +6,6 @@
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-enum WaveShape {
-    Swell(WaveContent), // 用于表示正在编辑的Wave，会有内容
-    Ripple, // 用于表示不在编辑的Wave，没有内容只有元数据
-}
 
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -19,11 +14,18 @@ pub struct Wave {
     pub shape: WaveShape,
 }
 
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+enum WaveShape {
+    Swell(WaveContent), // 用于表示正在编辑的Wave，会有内容
+    Ripple, // 用于表示不在编辑的Wave，没有内容只有元数据
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct WaveMetadata {
     pub id: Uuid, 
     pub title: String, // title: 笔记标题
-    pub file_path: String, // file_path: 笔记文件路径
+    pub parent_id: String, // parent_id: 父id
     pub created_at: DateTime<Local>, // created_at: 笔记创建时间
     pub updated_at: DateTime<Local>, // updated_at: 笔记更新时间
 
