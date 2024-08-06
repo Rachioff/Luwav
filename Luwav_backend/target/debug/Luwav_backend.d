@@ -1,1 +1,1 @@
-D:\University\RUST\Luwav_backend\target\debug\Luwav_backend.exe: D:\University\RUST\Luwav_backend\src\lib.rs D:\University\RUST\Luwav_backend\src\main.rs
+/Users/kawaroii/RustRover/Luwav-1/Luwav_backend/target/debug/Luwav_backend: /Users/kawaroii/RustRover/Luwav-1/Luwav_backend/src/lib.rs /Users/kawaroii/RustRover/Luwav-1/Luwav_backend/src/main.rs
