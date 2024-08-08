@@ -8,14 +8,15 @@ pub struct Cluster {
     name: String,
     id: Uuid,
     parent: &Origin,
-    child: Option<Vec<Wave>>
+    child: Option<Vec<Wave>>,
 }
 
 impl Cluster {
     pub fn new(name: String, parent: &Origin) -> Self{
+        let id = uuid::Uuid::new_v4();
         Cluster {
             name,
-            // id要怎么存储和初始化呢，我现在还不知道uuid是怎么用的
+            id,
             parent,
             child: None,
         }

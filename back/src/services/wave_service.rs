@@ -1,4 +1,4 @@
-use crate::models::{Wave, WaveContent, WaveMetadata};
+use crate::models::{Wave, WaveContent, WaveMetadata, Cluster, Origin};
 use uuid::Uuid;
 use chrono::{DateTime, Local};
 
@@ -19,26 +19,24 @@ impl Tsunami {
     pub fn new(storage: Box<dyn WaveStorage>) -> Self {
         Self { 
             id: uuid::Uuid::new_v4(), 
-            storage 
+            storage, 
         }
     }
 
     
-    pub fn create_note(&self, parent_id: Uuid, shape: WaveContent) -> Result<Uuid, Box<dyn std::error::Error>> {
+    pub fn create_wave(&self, shape: WaveContent, parent: &Cluster) -> Result<Uuid, Box<dyn std::error::Error>> {
         let id = uuid::Uuid::new_v4();
         let wave = Wave {
-            frequency: WaveMetadata {
-                id,
-                parent_id,
-                title: "Untitled".to_string(),
-                tags: vec![],
-                created_at: chrono::Local::now(),
-                updated_at: chrono::Local::now(),
-            },
+            frequency: Wavemetadata::init_data(),
             shape: WaveShape::Swell(WaveContent { content: "".to_string() }),
+            parent,
         };
-        self.storage.save_note(&wave)?;
+        self.storage.save_wave(&wave)?;
         Ok(id)
+    }
+
+    pub fn create_cluster() {
+        
     }
 
     pub fn get_note(&self, id: &Uuid) -> Result<Note, Box<dyn std::error::Error>> {

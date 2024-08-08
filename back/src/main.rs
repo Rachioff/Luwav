@@ -13,8 +13,10 @@ fn save_note(content: String) -> Result<(), String> {
 }
 
 fn main() {
-  tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![save_note])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+  // tauri::Builder::default()
+  //   .invoke_handler(tauri::generate_handler![save_note])
+  //   .run(tauri::generate_context!())
+  //   .expect("error while running tauri application");
+  println!("hello");
+  
 }
