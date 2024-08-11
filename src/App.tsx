@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import { useState } from 'react'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
 import './App.css'
 'use client';
 
@@ -17,7 +17,6 @@ import { createExcalidrawPlugin, ELEMENT_EXCALIDRAW } from '@udecode/plate-excal
 import { createTogglePlugin, ELEMENT_TOGGLE } from '@udecode/plate-toggle';
 import { createColumnPlugin, ELEMENT_COLUMN_GROUP, ELEMENT_COLUMN } from '@udecode/plate-layout';
 import { createCaptionPlugin } from '@udecode/plate-caption';
-import { createMentionPlugin, ELEMENT_MENTION, ELEMENT_MENTION_INPUT } from '@udecode/plate-mention';
 import { createTablePlugin, ELEMENT_TABLE, ELEMENT_TR, ELEMENT_TD, ELEMENT_TH } from '@udecode/plate-table';
 import { createTodoListPlugin, ELEMENT_TODO_LI } from '@udecode/plate-list';
 import { createBoldPlugin, MARK_BOLD, createItalicPlugin, MARK_ITALIC, createUnderlinePlugin, MARK_UNDERLINE, createStrikethroughPlugin, MARK_STRIKETHROUGH, createCodePlugin, MARK_CODE, createSubscriptPlugin, MARK_SUBSCRIPT, createSuperscriptPlugin, MARK_SUPERSCRIPT } from '@udecode/plate-basic-marks';
@@ -60,8 +59,6 @@ import { ColumnGroupElement } from '@/components/plate-ui/column-group-element';
 import { ColumnElement } from '@/components/plate-ui/column-element';
 import { HeadingElement } from '@/components/plate-ui/heading-element';
 import { MediaEmbedElement } from '@/components/plate-ui/media-embed-element';
-import { MentionElement } from '@/components/plate-ui/mention-element';
-// import { MentionInputElement } from '@/components/plate-ui/mention-input-element';
 import { ParagraphElement } from '@/components/plate-ui/paragraph-element';
 import { TableElement } from '@/components/plate-ui/table-element';
 import { TableRowElement } from '@/components/plate-ui/table-row-element';
@@ -72,17 +69,18 @@ import { CommentLeaf } from '@/components/plate-ui/comment-leaf';
 import { CommentsPopover } from '@/components/plate-ui/comments-popover';
 import { HighlightLeaf } from '@/components/plate-ui/highlight-leaf';
 import { KbdLeaf } from '@/components/plate-ui/kbd-leaf';
-import { Editor } from '@/components/plate-ui/editor';
-import { FixedToolbar } from '@/components/plate-ui/fixed-toolbar';
-import { FixedToolbarButtons } from '@/components/plate-ui/fixed-toolbar-buttons';
+// import { Editor } from '@/components/plate-ui/editor';
+// import { FixedToolbar } from '@/components/plate-ui/fixed-toolbar';
+// import { FixedToolbarButtons } from '@/components/plate-ui/fixed-toolbar-buttons';
 import { FloatingToolbar } from '@/components/plate-ui/floating-toolbar';
 import { FloatingToolbarButtons } from '@/components/plate-ui/floating-toolbar-buttons';
 import { withPlaceholders } from '@/components/plate-ui/placeholder';
 import { withDraggables } from '@/components/plate-ui/with-draggables';
 import { EmojiInputElement } from '@/components/plate-ui/emoji-input-element';
-// import { TooltipProvider } from '@/components/plate-ui/tooltip';
 
-// import React, { useCallback } from 'react';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
+import CustomEditor from './CustomEditor';
+import { Button } from '@/components/plate-ui/button';
 
 
 const plugins = createPlugins(
@@ -107,7 +105,6 @@ const plugins = createPlugins(
         ]
       },
     }),
-    createMentionPlugin(),
     createTablePlugin(),
     createTodoListPlugin(),
     createBoldPlugin(),
@@ -261,8 +258,6 @@ const plugins = createPlugins(
       [ELEMENT_H5]: withProps(HeadingElement, { variant: 'h5' }),
       [ELEMENT_H6]: withProps(HeadingElement, { variant: 'h6' }),
       [ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
-      [ELEMENT_MENTION]: MentionElement,
-      // [ELEMENT_MENTION_INPUT]: MentionInputElement,
       [ELEMENT_PARAGRAPH]: ParagraphElement,
       [ELEMENT_TABLE]: TableElement,
       [ELEMENT_TR]: TableRowElement,
@@ -287,40 +282,22 @@ const initialValue = [
   {
     id: '1',
     type: 'p',
-    children: [{ text: 'Welcome to the Plate editor!' }],
+    children: [{ text: 'Hello, World!' }],
   },
 ];
 
-import { Icons } from '@/components/icons';
-
-const PlateEditor: React.FC = () => {
-  return (
-    <div className="border rounded-md">
-
-      <Plate plugins={plugins} initialValue={initialValue}>
-        <div>
-          {/* 编辑器内容会在这里渲染 */}
-          <PlateEditor1 />
-        </div>
-      </Plate>
-    </div>
-  );
-};
-
-export function PlateEditor1() {
+export function PlateEditor() {
   return (
     <DndProvider backend={HTML5Backend}>
       <CommentsProvider users={{}} myUserId="1">
         <Plate plugins={plugins} initialValue={initialValue}>
-          <FixedToolbar>
-            <FixedToolbarButtons />
-          </FixedToolbar>
           
-          <Editor />
+          <CustomEditor />
           
           <FloatingToolbar>
             <FloatingToolbarButtons />
           </FloatingToolbar>
+          <Button>Send message</Button>
           <CommentsPopover />
         </Plate>
       </CommentsProvider>
@@ -330,10 +307,11 @@ export function PlateEditor1() {
 
 function App() {
   return (
-    <div className="App">
-      <h1>My Plate Editor App</h1>
-      {/* <PlateEditor /> */}
-    </div>
+    <TooltipProvider>
+      <div className="App">
+        <PlateEditor />
+      </div>
+    </TooltipProvider>
   );
 }
 
