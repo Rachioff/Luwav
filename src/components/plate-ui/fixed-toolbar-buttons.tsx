@@ -63,6 +63,7 @@ export function FixedToolbarButtons() {
         )}
 
         <div className="grow" />
+        
 
         <ToolbarGroup noSeparator>
           <ModeDropdownMenu />

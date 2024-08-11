@@ -79,9 +79,13 @@ import { withDraggables } from '@/components/plate-ui/with-draggables';
 import { EmojiInputElement } from '@/components/plate-ui/emoji-input-element';
 
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import CustomEditor from './CustomEditor';
 import { Button } from '@/components/plate-ui/button';
+import { Editor } from '@/components/plate-ui/editor';
+import { FixedToolbar } from '@/components/plate-ui/fixed-toolbar';
+import { FixedToolbarButtons } from '@/components/plate-ui/fixed-toolbar-buttons';
+import { AlignDropdownMenu } from '@/components/plate-ui/align-dropdown-menu';
 
+import { autoformatRules } from '@/components/autoformatRules';
 
 const plugins = createPlugins(
   [
@@ -124,11 +128,17 @@ const plugins = createPlugins(
         props: {
           validTypes: [
             ELEMENT_PARAGRAPH,
-            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3
+            ELEMENT_H1,
+            ELEMENT_H2,
+            ELEMENT_H3,
+            ELEMENT_H4,
+            ELEMENT_H5,
+            ELEMENT_H6,
           ],
         },
       },
     }),
+
     createIndentPlugin({
       inject: {
         props: {
@@ -163,9 +173,11 @@ const plugins = createPlugins(
     }),
     createAutoformatPlugin({
       options: {
-        rules: [
-          // Usage: https://platejs.org/docs/autoformat
-        ],
+        rules: autoformatRules,
+        // rules: [
+        //   autoformatRules
+        //   // Usage: https://platejs.org/docs/autoformat
+        // ],
         enableUndoOnDelete: true,
       },
     }),
@@ -282,22 +294,39 @@ const initialValue = [
   {
     id: '1',
     type: 'p',
+    align: 'left',
     children: [{ text: 'Hello, World!' }],
   },
 ];
+
+
 
 export function PlateEditor() {
   return (
     <DndProvider backend={HTML5Backend}>
       <CommentsProvider users={{}} myUserId="1">
-        <Plate plugins={plugins} initialValue={initialValue}>
+        <Plate plugins={plugins} initialValue={initialValue} >
           
-          <CustomEditor />
+          <div style={{
+        height: '500px',  // 或者您想要的任何高度
+        overflowY: 'auto',
+        border: '1px solid #ccc',
+        borderRadius: '8px',  // 添加圆角
+        padding: '5px',  // 增加内边距，提供更多留白
+        margin: '10px 0',  // 添加上下外边距，与其他元素保持间距
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',  // 添加轻微阴影，增强视觉效果
+      }}>
+              <FixedToolbar>
+                 <AlignDropdownMenu /> 
+                 <FixedToolbarButtons />
+              </FixedToolbar>
+            <Editor variant={'ghost'}/>
+          </div>
           
           <FloatingToolbar>
             <FloatingToolbarButtons />
           </FloatingToolbar>
-          <Button>Send message</Button>
+          <center><Button>Save</Button></center>
           <CommentsPopover />
         </Plate>
       </CommentsProvider>
@@ -305,12 +334,15 @@ export function PlateEditor() {
   );
 }
 
+
 function App() {
   return (
     <TooltipProvider>
+
       <div className="App">
         <PlateEditor />
       </div>
+
     </TooltipProvider>
   );
 }
