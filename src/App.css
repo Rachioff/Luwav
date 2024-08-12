@@ -128,3 +128,12 @@ ol {
 li {
   margin-bottom: 0.5em;
 }
+
+.button-container {
+  display: flex;
+  justify-content: center; /* 居中对齐按钮 */
+}
+
+.button-container Button {
+  margin: 0 10px; /* 设置按钮之间的间距 */
+}

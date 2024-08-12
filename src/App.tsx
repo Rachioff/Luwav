@@ -550,10 +550,11 @@ export function PlateEditor() {
           <FloatingToolbar>
             <FloatingToolbarButtons />
           </FloatingToolbar>
-          <center>
+          <div className="button-container">
             <Button onClick={handleSaveHtml}>Save as HTML</Button>
             <Button onClick={handleSaveJson}>Save as JSON</Button>
-          </center>
+          </div>
+
           <CommentsPopover />
         </Plate>
       </CommentsProvider>
