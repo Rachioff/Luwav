@@ -1,0 +1,159 @@
+[
+  {
+    "children": [
+      {
+        "text": "Heading 1"
+      }
+    ],
+    "type": "h1"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 2"
+      }
+    ],
+    "type": "h2"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 3"
+      }
+    ],
+    "type": "h3"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 4"
+      }
+    ],
+    "type": "h4"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 5"
+      }
+    ],
+    "type": "h5"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 6"
+      }
+    ],
+    "type": "h6"
+  },
+  {
+    "children": [
+      {
+        "text": "这是一段测试文本，主要测试"
+      },
+      {
+        "text": "粗体",
+        "bold": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "斜体",
+        "italic": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "粗斜体",
+        "bold": true,
+        "italic": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "高光",
+        "highlight": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "波浪线",
+        "strikethrough": true
+      },
+      {
+        "text": "、下划线。还有行内"
+      },
+      {
+        "text": "代码块",
+        "code": true
+      }
+    ],
+    "type": "p"
+  },
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "text": "print(“Hello, World!\")"
+          }
+        ],
+        "type": "code_line"
+      }
+    ],
+    "type": "code_block",
+    "lang": "python"
+  },
+  {
+    "children": [
+      {
+        "text": "这是引用块"
+      }
+    ],
+    "type": "blockquote"
+  },
+  {
+    "children": [
+      {
+        "text": "目前的问题是："
+      }
+    ],
+    "type": "p"
+  },
+  {
+    "children": [
+      {
+        "text": "所有的自动匹配格式都需要前面加入空格，并且会影响到之后的文本输入"
+      }
+    ],
+    "type": "p",
+    "indent": 1,
+    "listStyleType": "decimal",
+    "id": "urei6"
+  },
+  {
+    "children": [
+      {
+        "text": " 并且列表的换行是另起一行，不能做到换行的时候依旧是列表形式"
+      }
+    ],
+    "type": "p",
+    "id": "77p2h",
+    "indent": 1,
+    "listStyleType": "disc"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "type": "p",
+    "id": "yc9gs"
+  }
+]
