@@ -1,11 +1,11 @@
-// import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
+import React, { useState } from 'react';
 import './App.css'
 'use client';
 
 import { withProps } from '@udecode/cn';
-import { createPlugins, Plate, RenderAfterEditable, PlateLeaf } from '@udecode/plate-common';
+import { createPlugins, Plate, RenderAfterEditable, PlateLeaf, createDeserializeHtmlPlugin } from '@udecode/plate-common';
 import { createParagraphPlugin, ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { createHeadingPlugin, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_H4, ELEMENT_H5, ELEMENT_H6 } from '@udecode/plate-heading';
 import { createBlockquotePlugin, ELEMENT_BLOCKQUOTE } from '@udecode/plate-block-quote';
@@ -87,6 +87,12 @@ import { AlignDropdownMenu } from '@/components/plate-ui/align-dropdown-menu';
 
 import { autoformatRules } from '@/components/autoformatRules';
 
+import { createPlateEditor } from '@udecode/plate-common';
+import { serializeHtml } from '@udecode/plate-serializer-html';
+
+import { save } from '@tauri-apps/api/dialog';
+import { writeTextFile } from '@tauri-apps/api/fs';
+
 const plugins = createPlugins(
   [
     createParagraphPlugin(),
@@ -105,6 +111,8 @@ const plugins = createPlugins(
     createCaptionPlugin({
       options: {
         pluginKeys: [
+          ELEMENT_IMAGE,
+          ELEMENT_MEDIA_EMBED
           // ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED
         ]
       },
@@ -154,7 +162,15 @@ const plugins = createPlugins(
         props: {
           validTypes: [
             ELEMENT_PARAGRAPH,
-            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_BLOCKQUOTE, ELEMENT_CODE_BLOCK
+            ELEMENT_H1,
+            ELEMENT_H2,
+            ELEMENT_H3,
+            ELEMENT_H4,
+            ELEMENT_H5,
+            ELEMENT_H6,
+            ELEMENT_BLOCKQUOTE,
+            ELEMENT_CODE_BLOCK,
+            ELEMENT_TOGGLE,
           ],
         },
       },
@@ -166,6 +182,12 @@ const plugins = createPlugins(
           validNodeValues: [1, 1.2, 1.5, 2, 3],
           validTypes: [
             ELEMENT_PARAGRAPH,
+            ELEMENT_H1,
+            ELEMENT_H2,
+            ELEMENT_H3,
+            ELEMENT_H4,
+            ELEMENT_H5,
+            ELEMENT_H6,
             // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3
           ],
         },
@@ -233,6 +255,9 @@ const plugins = createPlugins(
             hotkey: 'enter',
             query: {
               allow: [
+                // ELEMENT_CODE_BLOCK,
+                // ELEMENT_BLOCKQUOTE,
+                // ELEMENT_TD,
                 // ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD
               ],
             },
@@ -248,6 +273,7 @@ const plugins = createPlugins(
     createDeserializeDocxPlugin(),
     createDeserializeCsvPlugin(),
     createDeserializeMdPlugin(),
+    createDeserializeHtmlPlugin(),
     createJuicePlugin(),
   ],
   {
@@ -290,43 +316,244 @@ const plugins = createPlugins(
   }
 );
 
+
+
 const initialValue = [
   {
-    id: '1',
-    type: 'p',
-    align: 'left',
-    children: [{ text: 'Hello, World!' }],
+    "children": [
+      {
+        "text": "Heading 1"
+      }
+    ],
+    "type": "h1"
   },
-];
+  {
+    "children": [
+      {
+        "text": "Heading 2"
+      }
+    ],
+    "type": "h2"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 3"
+      }
+    ],
+    "type": "h3"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 4"
+      }
+    ],
+    "type": "h4"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 5"
+      }
+    ],
+    "type": "h5"
+  },
+  {
+    "children": [
+      {
+        "text": "Heading 6"
+      }
+    ],
+    "type": "h6"
+  },
+  {
+    "children": [
+      {
+        "text": "这是一段测试文本，主要测试"
+      },
+      {
+        "text": "粗体",
+        "bold": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "斜体",
+        "italic": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "粗斜体",
+        "bold": true,
+        "italic": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "高光",
+        "highlight": true
+      },
+      {
+        "text": "、"
+      },
+      {
+        "text": "波浪线",
+        "strikethrough": true
+      },
+      {
+        "text": "、下划线。还有行内"
+      },
+      {
+        "text": "代码块",
+        "code": true
+      }
+    ],
+    "type": "p"
+  },
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "text": "print(“Hello, World!\")"
+          }
+        ],
+        "type": "code_line"
+      }
+    ],
+    "type": "code_block",
+    "lang": "python"
+  },
+  {
+    "children": [
+      {
+        "text": "这是引用块"
+      }
+    ],
+    "type": "blockquote"
+  },
+  {
+    "children": [
+      {
+        "text": "目前的问题是："
+      }
+    ],
+    "type": "p"
+  },
+  {
+    "children": [
+      {
+        "text": "所有的自动匹配格式都需要前面加入空格，并且会影响到之后的文本输入"
+      }
+    ],
+    "type": "p",
+    "indent": 1,
+    "listStyleType": "decimal",
+    "id": "urei6"
+  },
+  {
+    "children": [
+      {
+        "text": " 并且列表的换行是另起一行，不能做到换行的时候依旧是列表形式"
+      }
+    ],
+    "type": "li",
+    "id": "77p2h",
+    "indent": 1,
+    "listStyleType": "disc"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "type": "li",
+    "id": "yc9gs"
+  }
+]
 
 
 
 export function PlateEditor() {
+  const [editor] = useState(() => createPlateEditor({ plugins }));
+
+  const handleSaveHtml = async () => {
+    try {
+      const html = serializeHtml(editor, {
+        nodes: editor.children,
+      });
+
+      // console.log('Serialized HTML:', html); 
+
+      const filePath = await save({
+        filters: [{
+          name: 'HTML',
+          extensions: ['html']
+        }]
+      });
+
+      if (filePath) {
+        await writeTextFile(filePath, html);
+        console.log('HTML file saved successfully');
+      }
+    } catch (error) {
+      console.error('Failed to save HTML file:', error);
+    }
+  };
+
+  const handleSaveJson = async () => {
+    try {
+      const json = JSON.stringify(editor.children, null, 2);
+      console.log('Serialized JSON:', json); 
+      const filePath = await save({
+        filters: [{
+          name: 'JSON',
+          extensions: ['json']
+        }]
+      });
+
+      if (filePath) {
+        await writeTextFile(filePath, json);
+        console.log('JSON file saved successfully');
+      }
+    } catch (error) {
+      console.error('Failed to save JSON file:', error);
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <CommentsProvider users={{}} myUserId="1">
-        <Plate plugins={plugins} initialValue={initialValue} >
-          
+        <Plate plugins={plugins} initialValue={initialValue} editor={editor}>
           <div style={{
-        height: '500px',  // 或者您想要的任何高度
-        overflowY: 'auto',
-        border: '1px solid #ccc',
-        borderRadius: '8px',  // 添加圆角
-        padding: '5px',  // 增加内边距，提供更多留白
-        margin: '10px 0',  // 添加上下外边距，与其他元素保持间距
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',  // 添加轻微阴影，增强视觉效果
-      }}>
-              <FixedToolbar>
-                 <AlignDropdownMenu /> 
-                 <FixedToolbarButtons />
-              </FixedToolbar>
+            height: '500px',
+            overflowY: 'auto',
+            border: '1px solid #ccc',
+            borderRadius: '8px',
+            padding: '5px',
+            margin: '10px 0',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          }}>
+            <FixedToolbar>
+              <AlignDropdownMenu /> 
+              <FixedToolbarButtons />
+            </FixedToolbar>
             <Editor variant={'ghost'}/>
           </div>
           
           <FloatingToolbar>
             <FloatingToolbarButtons />
           </FloatingToolbar>
-          <center><Button>Save</Button></center>
+          <center>
+            <Button onClick={handleSaveHtml}>Save as HTML</Button>
+            <Button onClick={handleSaveJson}>Save as JSON</Button>
+          </center>
           <CommentsPopover />
         </Plate>
       </CommentsProvider>
@@ -334,15 +561,12 @@ export function PlateEditor() {
   );
 }
 
-
 function App() {
   return (
     <TooltipProvider>
-
       <div className="App">
         <PlateEditor />
       </div>
-
     </TooltipProvider>
   );
 }
