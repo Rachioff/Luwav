@@ -462,7 +462,7 @@ const initialValue = [
         "text": " 并且列表的换行是另起一行，不能做到换行的时候依旧是列表形式"
       }
     ],
-    "type": "li",
+    "type": "p",
     "id": "77p2h",
     "indent": 1,
     "listStyleType": "disc"
@@ -473,7 +473,7 @@ const initialValue = [
         "text": ""
       }
     ],
-    "type": "li",
+    "type": "p",
     "id": "yc9gs"
   }
 ]
@@ -532,7 +532,7 @@ export function PlateEditor() {
       <CommentsProvider users={{}} myUserId="1">
         <Plate plugins={plugins} initialValue={initialValue} editor={editor}>
           <div style={{
-            height: '500px',
+            height: 'auto',
             overflowY: 'auto',
             border: '1px solid #ccc',
             borderRadius: '8px',
