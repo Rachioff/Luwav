@@ -1,11 +1,11 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css'
 'use client';
 
 import { withProps } from '@udecode/cn';
-import { createPlugins, Plate, RenderAfterEditable, PlateLeaf, createDeserializeHtmlPlugin } from '@udecode/plate-common';
+import { createPlugins, Plate, RenderAfterEditable, PlateLeaf, PlateElement, createDeserializeHtmlPlugin } from '@udecode/plate-common';
 import { createParagraphPlugin, ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { createHeadingPlugin, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_H4, ELEMENT_H5, ELEMENT_H6 } from '@udecode/plate-heading';
 import { createBlockquotePlugin, ELEMENT_BLOCKQUOTE } from '@udecode/plate-block-quote';
@@ -54,6 +54,7 @@ import { HrElement } from '@/components/plate-ui/hr-element';
 import { ImageElement } from '@/components/plate-ui/image-element';
 import { LinkElement } from '@/components/plate-ui/link-element';
 import { LinkFloatingToolbar } from '@/components/plate-ui/link-floating-toolbar';
+import { ListElement } from '@/components/plate-ui/list-element';
 import { ToggleElement } from '@/components/plate-ui/toggle-element';
 import { ColumnGroupElement } from '@/components/plate-ui/column-group-element';
 import { ColumnElement } from '@/components/plate-ui/column-element';
@@ -69,9 +70,6 @@ import { CommentLeaf } from '@/components/plate-ui/comment-leaf';
 import { CommentsPopover } from '@/components/plate-ui/comments-popover';
 import { HighlightLeaf } from '@/components/plate-ui/highlight-leaf';
 import { KbdLeaf } from '@/components/plate-ui/kbd-leaf';
-// import { Editor } from '@/components/plate-ui/editor';
-// import { FixedToolbar } from '@/components/plate-ui/fixed-toolbar';
-// import { FixedToolbarButtons } from '@/components/plate-ui/fixed-toolbar-buttons';
 import { FloatingToolbar } from '@/components/plate-ui/floating-toolbar';
 import { FloatingToolbarButtons } from '@/components/plate-ui/floating-toolbar-buttons';
 import { withPlaceholders } from '@/components/plate-ui/placeholder';
@@ -83,7 +81,7 @@ import { Button } from '@/components/plate-ui/button';
 import { Editor } from '@/components/plate-ui/editor';
 import { FixedToolbar } from '@/components/plate-ui/fixed-toolbar';
 import { FixedToolbarButtons } from '@/components/plate-ui/fixed-toolbar-buttons';
-import { AlignDropdownMenu } from '@/components/plate-ui/align-dropdown-menu';
+
 
 import { autoformatRules } from '@/components/autoformatRules';
 
@@ -317,187 +315,35 @@ const plugins = createPlugins(
 );
 
 
-
-const initialValue = [
-  {
-    "children": [
-      {
-        "text": "Heading 1"
-      }
-    ],
-    "type": "h1"
-  },
-  {
-    "children": [
-      {
-        "text": "Heading 2"
-      }
-    ],
-    "type": "h2"
-  },
-  {
-    "children": [
-      {
-        "text": "Heading 3"
-      }
-    ],
-    "type": "h3"
-  },
-  {
-    "children": [
-      {
-        "text": "Heading 4"
-      }
-    ],
-    "type": "h4"
-  },
-  {
-    "children": [
-      {
-        "text": "Heading 5"
-      }
-    ],
-    "type": "h5"
-  },
-  {
-    "children": [
-      {
-        "text": "Heading 6"
-      }
-    ],
-    "type": "h6"
-  },
-  {
-    "children": [
-      {
-        "text": "这是一段测试文本，主要测试"
-      },
-      {
-        "text": "粗体",
-        "bold": true
-      },
-      {
-        "text": "、"
-      },
-      {
-        "text": "斜体",
-        "italic": true
-      },
-      {
-        "text": "、"
-      },
-      {
-        "text": "粗斜体",
-        "bold": true,
-        "italic": true
-      },
-      {
-        "text": "、"
-      },
-      {
-        "text": "高光",
-        "highlight": true
-      },
-      {
-        "text": "、"
-      },
-      {
-        "text": "波浪线",
-        "strikethrough": true
-      },
-      {
-        "text": "、下划线。还有行内"
-      },
-      {
-        "text": "代码块",
-        "code": true
-      }
-    ],
-    "type": "p"
-  },
-  {
-    "children": [
-      {
-        "children": [
-          {
-            "text": "print(“Hello, World!\")"
-          }
-        ],
-        "type": "code_line"
-      }
-    ],
-    "type": "code_block",
-    "lang": "python"
-  },
-  {
-    "children": [
-      {
-        "text": "这是引用块"
-      }
-    ],
-    "type": "blockquote"
-  },
-  {
-    "children": [
-      {
-        "text": "目前的问题是："
-      }
-    ],
-    "type": "p"
-  },
-  {
-    "children": [
-      {
-        "text": "所有的自动匹配格式都需要前面加入空格，并且会影响到之后的文本输入"
-      }
-    ],
-    "type": "p",
-    "indent": 1,
-    "listStyleType": "decimal",
-    "id": "urei6"
-  },
-  {
-    "children": [
-      {
-        "text": " 并且列表的换行是另起一行，不能做到换行的时候依旧是列表形式"
-      }
-    ],
-    "type": "p",
-    "id": "77p2h",
-    "indent": 1,
-    "listStyleType": "disc"
-  },
-  {
-    "children": [
-      {
-        "text": ""
-      }
-    ],
-    "type": "p",
-    "id": "yc9gs"
-  }
-]
+import initV from "@/assets/initialValue.json"
+const initialValue = JSON.parse(JSON.stringify(initV));
 
 
+import { nanoid } from 'nanoid';
+import { useMemo } from 'react';
 
 export function PlateEditor() {
   const [editor] = useState(() => createPlateEditor({ plugins }));
+  const editorId = useMemo(() => nanoid(), []); // 使用 nanoid 或其他方法生成唯一ID
+
+  console.log('Initial editor content:', editor.children);
+
+  const html = serializeHtml(editor, {
+    nodes: editor.children,
+    dndWrapper: (props) => <DndProvider backend={HTML5Backend} {...props} />, // 确保传递了这个参数
+  });
 
   const handleSaveHtml = async () => {
+    console.log('Save HTML button clicked');
+    console.log("Editor content:", editor.children);
+
     try {
-      const html = serializeHtml(editor, {
-        nodes: editor.children,
-      });
-
-      // console.log('Serialized HTML:', html); 
-
+      console.log('Current serialized HTML:', html);
       const filePath = await save({
-        filters: [{
-          name: 'HTML',
-          extensions: ['html']
-        }]
+        filters: [{ name: 'HTML', extensions: ['html'] }]
       });
-
+      console.log('File path selected:', filePath);
+  
       if (filePath) {
         await writeTextFile(filePath, html);
         console.log('HTML file saved successfully');
@@ -527,36 +373,34 @@ export function PlateEditor() {
     }
   };
 
+  console.log('Final editor content:', editor.children);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <CommentsProvider users={{}} myUserId="1">
-        <Plate plugins={plugins} initialValue={initialValue} editor={editor}>
-          <div style={{
-            height: 'auto',
-            overflowY: 'auto',
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            padding: '5px',
-            margin: '10px 0',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          }}>
-            <FixedToolbar>
-              <AlignDropdownMenu /> 
-              <FixedToolbarButtons />
-            </FixedToolbar>
-            <Editor variant={'ghost'}/>
-          </div>
-          
-          <FloatingToolbar>
-            <FloatingToolbarButtons />
-          </FloatingToolbar>
+        <div className="editor-container">
+          <Plate plugins={plugins} initialValue={initialValue} editor={editor as any} id={editorId}>
+            <div className="toolbar-container">
+              <FixedToolbar>
+                <FixedToolbarButtons />
+              </FixedToolbar>
+            </div>
+            <div className="editor-content">
+              <Editor variant={'ghost'} autoFocus size="md"/>
+              <FloatingToolbar
+                editorId={editorId}
+                focusedEditorId={editorId} // 假设这个编辑器总是焦点
+              >
+                <FloatingToolbarButtons />
+              </FloatingToolbar>
+              <CommentsPopover />
+            </div>
+          </Plate>
           <div className="button-container">
             <Button onClick={handleSaveHtml}>Save as HTML</Button>
             <Button onClick={handleSaveJson}>Save as JSON</Button>
           </div>
-
-          <CommentsPopover />
-        </Plate>
+        </div>
       </CommentsProvider>
     </DndProvider>
   );
@@ -566,7 +410,19 @@ function App() {
   return (
     <TooltipProvider>
       <div className="App">
-        <PlateEditor />
+        <div style={{
+              height: 'auto',
+              overflowY: 'auto',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              padding: '5px',
+              margin: '10px 0',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            }}>
+
+          <PlateEditor />
+
+        </div>
       </div>
     </TooltipProvider>
   );

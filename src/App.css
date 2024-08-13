@@ -129,11 +129,41 @@ li {
   margin-bottom: 0.5em;
 }
 
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh; /* 减去一些空间用于其他UI元素 */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toolbar-container {
+  flex-shrink: 0;
+}
+
+.editor-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
 .button-container {
+  padding: 16px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #ccc;
   display: flex;
   justify-content: center; /* 居中对齐按钮 */
 }
 
 .button-container Button {
-  margin: 0 10px; /* 设置按钮之间的间距 */
+  margin: 0 5px; /* 设置按钮之间的间距 */
+}
+
+/* 确保 FixedToolbar 不会被滚动 */
+.toolbar-container .fixed-toolbar {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+  border-bottom: 1px solid #ccc;
 }
