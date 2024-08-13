@@ -14,7 +14,8 @@ import {
   ELEMENT_H6,
 } from '@udecode/plate-heading';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
-import { ELEMENT_UL, ELEMENT_OL, ELEMENT_LI,  toggleList, unwrapList } from '@udecode/plate-list';
+import { toggleList, unwrapList } from '@udecode/plate-list';
+import { ELEMENT_TODO_LI } from '@udecode/plate-list';
 import { ListStyleType, toggleIndentList } from '@udecode/plate-indent-list';
 import {
     MARK_SUBSCRIPT,
@@ -224,7 +225,7 @@ export const autoformatRules: AutoformatRule[] = [
   },
   {
     mode: 'block',
-    type: 'list',
+    type: "List",
     match: ['* ', '- '],
     format: (editor) => {
       toggleIndentList(editor, {
@@ -234,11 +235,21 @@ export const autoformatRules: AutoformatRule[] = [
   },
   {
     mode: 'block',
-    type: 'list',
+    type: "List",
     match: ['1. ', '1。', '1) ', '1）'],
     format: (editor) =>
       toggleIndentList(editor, {
         listStyleType: ListStyleType.Decimal,
       }),
   },
+  {
+    mode: 'block',
+    type: ELEMENT_TODO_LI,
+    match: ['[] ', '[x] '],
+    format: (editor) => {
+      toggleIndentList(editor, {
+        listStyleType: ListStyleType.DecimalLeadingZero,
+      });
+    },
+  }
 ];
