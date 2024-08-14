@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+// import React from 'react';
+
 import { cn, withRef } from '@udecode/cn';
 import { PortalBody, useComposedRef } from '@udecode/plate-common';
 import {
@@ -18,8 +19,10 @@ export const FloatingToolbar = withRef<
   {
     portalElement?: Element
     state?: FloatingToolbarState;
+    editorId: string;
+    focusedEditorId: string | null;
   }
->(({ state, portalElement, children, ...props }, componentRef) => {
+>(({ state, portalElement, children, editorId, focusedEditorId, ...props }, componentRef) => {
   const floatingToolbarState = useFloatingToolbarState({
     ...state,
     floatingOptions: {
@@ -38,6 +41,8 @@ export const FloatingToolbar = withRef<
       ],
       ...state?.floatingOptions,
     },
+    editorId,
+    focusedEditorId,
   });
 
   const {
@@ -55,7 +60,9 @@ export const FloatingToolbar = withRef<
       <Toolbar
         ref={ref}
         className={cn(
-          'absolute z-50 whitespace-nowrap border bg-popover px-1 opacity-100 shadow-md print:hidden'
+          'absolute z-50 whitespace-nowrap border bg-popover px-1 opacity-100 shadow-md print:hidden',
+          'rounded-lg', // 添加圆角
+          'overflow-hidden' // 确保内容不会溢出圆角
         )}
         {...rootProps}
         {...props}

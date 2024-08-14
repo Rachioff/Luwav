@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { cva } from 'class-variance-authority';
 import {
   AlignCenter,
@@ -61,6 +61,9 @@ import {
   Ungroup,
   WrapText,
   X,
+  Columns2Icon,
+  Columns3Icon,
+  TypeOutline,
 } from 'lucide-react';
 
 import type { LucideIcon } from 'lucide-react';
@@ -222,7 +225,12 @@ export const Icons = {
   underline: Underline,
   unlink: Link2Off,
   viewing: Eye,
-
+  doubleColumn: Columns2Icon,
+  threeColumn: Columns3Icon,
+  rightSideDoubleColumn: Columns2Icon,
+  leftSideDoubleColumn: Columns2Icon,
+  doubleSideDoubleColumn: Columns2Icon,
+  font: TypeOutline,
   // www
   gitHub: (props: LucideProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>

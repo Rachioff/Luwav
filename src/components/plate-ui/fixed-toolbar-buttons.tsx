@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   MARK_BOLD,
   MARK_CODE,
@@ -31,17 +31,94 @@ import { ModeDropdownMenu } from './mode-dropdown-menu';
 import { ToolbarGroup } from './toolbar';
 import { TurnIntoDropdownMenu } from './turn-into-dropdown-menu';
 
+const TOOLBAR_BREAKPOINT_FULL = 1280;
+const TOOLBAR_BREAKPOINT_MEDIUM = 1100;
+const TOOLBAR_BREAKPOINT_MEDIUM_COMPACT = 900;
+const TOOLBAR_BREAKPOINT_COMPACT = 750;
+
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isCompact = windowWidth < TOOLBAR_BREAKPOINT_COMPACT;
+  const isMedium_Compact = windowWidth < TOOLBAR_BREAKPOINT_MEDIUM_COMPACT;
+  const isMedium = windowWidth < TOOLBAR_BREAKPOINT_MEDIUM;
+  const isFull = windowWidth < TOOLBAR_BREAKPOINT_FULL;
+
+  const moreDropdownItems = useMemo(() => {
+    const items = [];
+
+    if (isFull) {
+      items.push(
+        <OutdentToolbarButton key="outdent">
+          <Icons.outdent className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Outdent</span>
+        </OutdentToolbarButton>,
+        <IndentToolbarButton key="indent">
+          <Icons.indent className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Indent</span>
+        </IndentToolbarButton>,
+        <IndentListToolbarButton key="list-disc" nodeType={ListStyleType.Disc}>
+          <Icons.ul className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Bullet List</span>
+        </IndentListToolbarButton>,
+        <IndentListToolbarButton key="list-decimal" nodeType={ListStyleType.Decimal}>
+          <Icons.ol className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Numbered List</span>
+        </IndentListToolbarButton>
+      );
+    }
+
+
+    if (isMedium) {
+      items.push(
+        <ColorDropdownMenu key="text-color" nodeType={MARK_COLOR} tooltip="Text Color">
+          <Icons.color className={iconVariants({ variant: 'toolbar' })} />
+        </ColorDropdownMenu>,
+        <ColorDropdownMenu key="bg-color" nodeType={MARK_BG_COLOR} tooltip="Highlight Color">
+          <Icons.bg className={iconVariants({ variant: 'toolbar' })} />
+        </ColorDropdownMenu>,
+      );
+    }
+
+    if (isMedium_Compact) {
+      items.push(
+        <TableDropdownMenu key="table">
+          <Icons.table className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Table</span>
+        </TableDropdownMenu>,
+        <EmojiDropdownMenu key="emoji">
+          <Icons.emoji className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Emoji</span>
+        </EmojiDropdownMenu>
+      );
+    }
+
+    if (isCompact) {
+      items.push(
+        <AlignDropdownMenu key="align">
+          <Icons.alignLeft className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Align</span>
+        </AlignDropdownMenu>,
+        <LineHeightDropdownMenu key="line-height">
+          <Icons.lineHeight className={iconVariants({ variant: 'toolbar' })} />
+          <span className="ml-2">Line Height</span>
+        </LineHeightDropdownMenu>,
+      );
+    }
+
+    return items;
+  }, [isCompact, isMedium_Compact, isMedium, isFull]);
 
   return (
     <div className="w-full overflow-hidden">
-      <div
-        className="flex flex-wrap"
-        style={{
-          transform: 'translateX(calc(-1px))',
-        }}
-      >
+      <div className="flex flex-wrap" style={{ transform: 'translateX(calc(-1px))' }}>
         {!readOnly && (
           <>
             <ToolbarGroup noSeparator>
@@ -62,7 +139,6 @@ export function FixedToolbarButtons() {
               >
                 <Icons.underline />
               </MarkToolbarButton>
-
               <MarkToolbarButton
                 tooltip="Strikethrough (⌘+⇧+M)"
                 nodeType={MARK_STRIKETHROUGH}
@@ -74,40 +150,49 @@ export function FixedToolbarButtons() {
               </MarkToolbarButton>
             </ToolbarGroup>
 
-            <ToolbarGroup>
-              <ColorDropdownMenu nodeType={MARK_COLOR} tooltip="Text Color">
-                <Icons.color className={iconVariants({ variant: 'toolbar' })} />
-              </ColorDropdownMenu>
-              <ColorDropdownMenu
-                nodeType={MARK_BG_COLOR}
-                tooltip="Highlight Color"
-              >
-                <Icons.bg className={iconVariants({ variant: 'toolbar' })} />
-              </ColorDropdownMenu>
-            </ToolbarGroup>
+            {!isCompact && (
+              <>
+                <ToolbarGroup>
+                  <AlignDropdownMenu />
+                  <LineHeightDropdownMenu />
+                  {!isMedium_Compact && (
+                    <>
+                      <ToolbarGroup>
+                        <TableDropdownMenu />
+                        <EmojiDropdownMenu />
+                      </ToolbarGroup>
+                    </>
+                  )}
+                  {!isMedium && (
+                    <>
+                      <ToolbarGroup>
+                        <ColorDropdownMenu nodeType={MARK_COLOR} tooltip="Text Color">
+                          <Icons.color className={iconVariants({ variant: 'toolbar' })} />
+                        </ColorDropdownMenu>
+                        <ColorDropdownMenu nodeType={MARK_BG_COLOR} tooltip="Highlight Color">
+                          <Icons.bg className={iconVariants({ variant: 'toolbar' })} />
+                        </ColorDropdownMenu>
+                      </ToolbarGroup>
+                    </>
+                  )}
+                  {!isFull && (
+                    <>
+                      <IndentListToolbarButton nodeType={ListStyleType.Disc} />
+                      <IndentListToolbarButton nodeType={ListStyleType.Decimal} />
+                      <OutdentToolbarButton />
+                      <IndentToolbarButton />
+                    </>
+                  )}
+                </ToolbarGroup>
 
-            <ToolbarGroup>
-              <AlignDropdownMenu />
 
-              <LineHeightDropdownMenu />
-
-              <IndentListToolbarButton nodeType={ListStyleType.Disc} />
-              <IndentListToolbarButton nodeType={ListStyleType.Decimal} />
-
-              <OutdentToolbarButton />
-              <IndentToolbarButton />
-            </ToolbarGroup>
+              </>
+            )}
 
             <ToolbarGroup>
               <LinkToolbarButton />
-
-              <MediaToolbarButton nodeType={ELEMENT_IMAGE} />
-
-              <TableDropdownMenu />
-
-              <EmojiDropdownMenu />
-
-              <MoreDropdownMenu />
+              <MediaToolbarButton nodeType={ELEMENT_IMAGE} tooltip="Image"/>
+              <MoreDropdownMenu>{moreDropdownItems}</MoreDropdownMenu>
             </ToolbarGroup>
           </>
         )}

@@ -57,13 +57,13 @@ export const autoformatBlocks: AutoformatRule[] = [
   {
     mode: 'block',
     type: ELEMENT_BLOCKQUOTE,
-    match: '> ',
+    match: ['> ', '》 ', '" ', '“ '],
     preFormat,
   },
   {
     mode: 'block',
     type: ELEMENT_CODE_BLOCK,
-    match: '```',
+    match: ['```', '···'],
     triggerAtBlockStart: false,
     preFormat,
     format: (editor) => {
@@ -76,7 +76,7 @@ export const autoformatBlocks: AutoformatRule[] = [
   {
     mode: 'block',
     type: ELEMENT_HR,
-    match: ['---', '—-', '___ '],
+    match: ['---', '—-', '___ ', '***', '—— '],
     format: (editor) => {
       setNodes(editor, { type: ELEMENT_HR });
       insertNodes(editor, {

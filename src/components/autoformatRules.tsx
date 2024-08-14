@@ -13,7 +13,7 @@ import {
   ELEMENT_H5,
   ELEMENT_H6,
 } from '@udecode/plate-heading';
-import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
+
 import { toggleList, unwrapList } from '@udecode/plate-list';
 import { ELEMENT_TODO_LI } from '@udecode/plate-list';
 import { ListStyleType, toggleIndentList } from '@udecode/plate-indent-list';
@@ -24,7 +24,6 @@ import {
   } from '@udecode/plate-basic-marks';
 import { MARK_HIGHLIGHT } from '@udecode/plate-highlight';
 
-import { MyAutoformatRule } from '@/lib/plate/plate-types';
 
 
 import { ELEMENT_BLOCKQUOTE } from '@udecode/plate-block-quote';

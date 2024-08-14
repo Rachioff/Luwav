@@ -35,7 +35,6 @@ import {
   isSelectionAtCodeBlockStart,
   unwrapCodeBlock,
 } from '@udecode/plate-code-block';
-import { createComboboxPlugin } from '@udecode/plate-combobox';
 import { createCommentsPlugin, MARK_COMMENT } from '@udecode/plate-comments';
 import {
   createPlugins,
@@ -99,8 +98,6 @@ import {
 } from '@udecode/plate-media';
 import {
   createMentionPlugin,
-  ELEMENT_MENTION,
-  ELEMENT_MENTION_INPUT,
 } from '@udecode/plate-mention';
 import { createNodeIdPlugin } from '@udecode/plate-node-id';
 import {
@@ -130,7 +127,6 @@ import { CodeLeaf } from '@/components/plate-ui/code-leaf';
 import { CodeLineElement } from '@/components/plate-ui/code-line-element';
 import { CodeSyntaxLeaf } from '@/components/plate-ui/code-syntax-leaf';
 import { CommentLeaf } from '@/components/plate-ui/comment-leaf';
-import { EmojiCombobox } from '@/components/plate-ui/emoji-combobox';
 import { ExcalidrawElement } from '@/components/plate-ui/excalidraw-element';
 import { HeadingElement } from '@/components/plate-ui/heading-element';
 import { HighlightLeaf } from '@/components/plate-ui/highlight-leaf';
@@ -141,8 +137,6 @@ import { LinkElement } from '@/components/plate-ui/link-element';
 import { LinkFloatingToolbar } from '@/components/plate-ui/link-floating-toolbar';
 import { ListElement } from '@/components/plate-ui/list-element';
 import { MediaEmbedElement } from '@/components/plate-ui/media-embed-element';
-import { MentionElement } from '@/components/plate-ui/mention-element';
-import { MentionInputElement } from '@/components/plate-ui/mention-input-element';
 import { ParagraphElement } from '@/components/plate-ui/paragraph-element';
 import { withPlaceholders } from '@/components/plate-ui/placeholder';
 import {
@@ -209,6 +203,14 @@ export const plugins = createPlugins(
         },
       },
     }),
+    createBlockSelectionPlugin({
+      options: {
+        sizes: {
+          top: 0,
+          bottom: 0,
+        },
+      },
+    }),
     createIndentPlugin({
       inject: {
         props: {
@@ -249,21 +251,10 @@ export const plugins = createPlugins(
 
     // Functionality
     createAutoformatPlugin(autoformatPlugin),
-    createBlockSelectionPlugin({
-      options: {
-        sizes: {
-          top: 0,
-          bottom: 0,
-        },
-      },
-    }),
-    createComboboxPlugin(),
     createDndPlugin({
       options: { enableScroller: true },
     }),
-    createEmojiPlugin({
-      renderAfterEditable: EmojiCombobox as RenderAfterEditable,
-    }),
+    createEmojiPlugin(),
     createExitBreakPlugin({
       options: {
         rules: [
@@ -393,8 +384,6 @@ export const plugins = createPlugins(
         [ELEMENT_LI]: withProps(PlateElement, { as: 'li' }),
         [ELEMENT_LINK]: LinkElement,
         [ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
-        [ELEMENT_MENTION]: MentionElement,
-        [ELEMENT_MENTION_INPUT]: MentionInputElement,
         [ELEMENT_UL]: withProps(ListElement, { variant: 'ul' }),
         [ELEMENT_OL]: withProps(ListElement, { variant: 'ol' }),
         [ELEMENT_PARAGRAPH]: ParagraphElement,

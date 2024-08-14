@@ -75,7 +75,7 @@ export function ColorDropdownMenuItems({
 }: ColorDropdownMenuItemsProps) {
   return (
     <div
-      className={cn('grid grid-cols-[repeat(10,1fr)] gap-1', className)}
+      className={cn('grid grid-cols-[repeat(10,1fr)] gap-1 p', className)}
       {...props}
     >
       {colors.map(({ name, value, isBrightColor }) => (

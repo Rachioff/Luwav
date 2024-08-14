@@ -12,9 +12,17 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
+      "all": true,
+      "shell": {
+        "all": true,
+        "execute": false,
+        "open": false,
+        "scope": [],
+        "sidecar": false
+      },
       "fs": {
         "all": true,
+        "scope": ["$RESOURCE/*", "$RESOURCE/../notes/*", "$APPDATA/*", "$APPDATA/notes/*"],
         "writeFile": true,
         "readDir": true,
         "readFile": true,
@@ -23,6 +31,9 @@
         "createDir": true,
         "removeDir": true,
         "exists": true
+      },
+      "path": {
+        "all": true
       },
       "dialog": {
         "all": true,
@@ -45,7 +56,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.kawaroii.luwav",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -72,10 +83,15 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 900,
         "resizable": true,
         "title": "luwav",
-        "width": 800
+        "width": 1200,
+        "minWidth": 400,
+        "minHeight": 600,
+        "decorations": true,
+        "titleBarStyle": "Visible",
+        "fileDropEnabled": false
       }
     ]
   }
