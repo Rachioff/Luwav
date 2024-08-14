@@ -2,7 +2,7 @@
 
 /* eslint-disable unicorn/prefer-export-from */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { cn } from '@udecode/cn';
 import {

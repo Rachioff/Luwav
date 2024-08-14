@@ -3,10 +3,13 @@
 @tailwind utilities;
 
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: left;
+}
+
+.container {
+  min-width: 300px;
 }
 
 .logo {
@@ -93,17 +96,6 @@
   }
 }
 
-button {
-  border-radius: 8px;
-  border: 0px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #f7f7f7;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
 button:hover {
   border-color: #646cff;
 }
@@ -112,28 +104,10 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-
-ul, ol {
-  padding-left: 1.5em;
-}
-
-ul {
-  list-style-type: disc;
-}
-
-ol {
-  list-style-type: decimal;
-}
-
-li {
-  margin-bottom: 0.5em;
-}
-
 .editor-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 80vh; /* 减去一些空间用于其他UI元素 */
-  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -142,21 +116,9 @@ li {
 }
 
 .editor-content {
-  flex-grow: 1;
+  flex: 1;
   overflow-y: auto;
-  padding: 16px;
-}
-
-.button-container {
-  padding: 16px;
-  background-color: #f0f0f0;
-  border-top: 1px solid #ccc;
-  display: flex;
-  justify-content: center; /* 居中对齐按钮 */
-}
-
-.button-container Button {
-  margin: 0 5px; /* 设置按钮之间的间距 */
+  padding: 20px;
 }
 
 /* 确保 FixedToolbar 不会被滚动 */
@@ -167,3 +129,289 @@ li {
   z-index: 10;
   border-bottom: 1px solid #ccc;
 }
+
+/* 在 src/App.css 文件中添加或修改以下样式 */
+
+/* 重置全局选择样式 */
+::selection {
+  background-color: transparent;
+}
+
+/* 编辑器容器样式 */
+[data-slate-editor="true"] {
+  user-select: text;
+}
+
+/* 为所有文本节点设置选择样式 */
+[data-slate-node="text"],
+[data-slate-leaf] span {
+  background-color: transparent;
+}
+
+[data-slate-node="text"]::selection,
+[data-slate-leaf] span::selection {
+  background-color: rgba(176, 196, 222, 0.4) !important; /* 灰蓝色，带有透明度 */
+  color: inherit;
+}
+
+
+
+
+/* 防止工具栏和其他UI元素被选中 */
+[contenteditable="false"],
+.slate-toolbar,
+.slate-floating-toolbar {
+  user-select: none !important;
+}
+
+
+.color-picker-button {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.mode-toggle-container {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+}
+
+.mode-toggle-container button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.mode-toggle-container button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+
+
+/* ========================== */
+
+.plate-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.info-sidebar {
+  width: 200px;
+  min-width: 200px; /* 添加最小宽度 */
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.info-content {
+  margin-right: 30px;
+  padding: 25px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.save-button {
+  position: absolute;
+  right: 80px;
+  bottom: -30px;
+  transform: rotate(90deg);
+  height: 150px;
+  width: 40px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.save-button1 {
+  position: absolute;
+  right: 80px;
+  bottom: 18px;
+  transform: rotate(90deg);
+  height: 150px;
+  width: 40px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-color: #cdcdcd;
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.save-button1:hover {
+  background-color: var(--primary-dark);
+  color: #f5f7fc;
+  transform: rotate(90deg) scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.save-button1:active {
+  transform: rotate(90deg) scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.save-button1:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.5);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+  }
+}
+
+.save-button1:not(:active):hover {
+  animation: pulse 1.5s infinite;
+}
+
+.info-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 20px;  /* 添加右侧间距 */
+}
+
+.breadcrumb {
+  font-size: 0.8em;
+  color: var(--muted-foreground);
+  margin-bottom: 10px;
+}
+
+.document-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.document-meta {
+  font-size: 0.9em;
+  color: var(--muted-foreground);
+}
+
+.editor-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar-container {
+  flex-shrink: 0;
+}
+
+/* 确保 FixedToolbar 不会被滚动 */
+.toolbar-container .fixed-toolbar {
+  position: sticky;
+  top: 0;
+  background-color: var(--background);
+  z-index: 10;
+
+  border-bottom: 1px solid var(--border);
+}
+
+/* 自定义滚动条样式 */
+.editor-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.editor-content::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.editor-content::-webkit-scrollbar-thumb {
+  background-color: var(--muted);
+  border-radius: 4px;
+  border: 2px solid var(--background);
+}
+
+/* 调整 App 容器样式 */
+.App {
+  display: block;
+  height: 90vh;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============================= */
+
+@font-face {
+  font-family: 'Sans-normal';
+  src: url('/src/assets/fonts/SourceHanSansSC-Normal.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Kai';
+  src: url('/src/assets/fonts/Kai_GB2312.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ImitationSong';
+  src: url('/src/assets/fonts/FS_GB2312.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Song';
+  src: url('/src/assets/fonts/SourceHanSerifSC-Regular.otf') format('opentype');
+}
+
+:root {
+  --font-default: system-ui, 'Sans-normal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-kai: 'Kai', var(--font-default);
+  --font-imitationsong: 'ImitationSong', var(--font-default);
+  --font-song: 'Song', var(--font-default);
+}
+
+body {
+  font-family: var(--font-family);
+}
+
+[data-font="Default"] {
+  --font-family: var(--font-default);
+}
+
+[data-font="Kai"] {
+  --font-family: var(--font-kai);
+}
+
+[data-font="ImitationSong"] {
+  --font-family: var(--font-imitation-song);
+}
+
+[data-font="Song"] {
+  --font-family: var(--font-song);
+}
+

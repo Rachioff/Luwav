@@ -18,6 +18,15 @@ module.exports = {
       },
     },
     extend: {
+      extend: {
+        fontFamily: {
+          sans: ['var(--font-kai)', 'sans-serif'],
+          // sans: ['var(--font-default)', 'system-ui', 'sans-serif'],
+          kai: ['var(--font-kai)', 'sans-serif'],
+          imitationSong: ['var(--font-imitationsong)', 'serif'],
+          song: ['var(--font-song)', 'serif'],
+        },
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

@@ -1,11 +1,10 @@
 import React from 'react';
-
 import type { PlateContentProps } from '@udecode/plate-common';
 import type { VariantProps } from 'class-variance-authority';
-
 import { cn } from '@udecode/cn';
 import { PlateContent } from '@udecode/plate-common';
 import { cva } from 'class-variance-authority';
+import { useFont } from '@/lib/font-context'; // 导入 useFont hook
 
 const editorVariants = cva(
   cn(
@@ -61,6 +60,8 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>(
     },
     ref
   ) => {
+    const { font } = useFont(); // 使用 useFont hook 获取当前字体
+
     return (
       <div className="relative w-full" ref={ref}>
         <PlateContent
@@ -77,6 +78,10 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>(
           )}
           disableDefaultStyles
           readOnly={disabled ?? readOnly}
+          style={{ 
+            fontFamily: `var(--font-${font.toLowerCase()})` ,
+            letterSpacing: '0.02em' 
+          }} // 应用字体
           {...props}
         />
       </div>

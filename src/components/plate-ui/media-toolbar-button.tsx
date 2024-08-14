@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { withRef } from '@udecode/cn';
 import {
   ELEMENT_IMAGE,
@@ -19,8 +19,23 @@ export const MediaToolbarButton = withRef<
   const { props } = useMediaToolbarButton({ nodeType });
 
   return (
-    <ToolbarButton ref={ref} {...props} {...rest}>
+    <ToolbarButton
+      ref={ref}
+      {...rest}
+      onClick={async (e) => {
+        console.log('Media button clicked');
+        try {
+          console.log('Before calling props.onClick');
+          props.onClick();
+          console.log('After calling props.onClick');
+        } catch (error) {
+          console.error('Error inserting media:', error);
+        }
+      }}
+      onMouseDown={props.onMouseDown}
+    >
       <Icons.image />
+      <Icons.moon />
     </ToolbarButton>
   );
 });

@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import {
   MARK_BOLD,
   MARK_CODE,
@@ -7,13 +7,15 @@ import {
   MARK_UNDERLINE,
 } from '@udecode/plate-basic-marks';
 import { useEditorReadOnly } from '@udecode/plate-common';
+import { MARK_COLOR, MARK_BG_COLOR } from '@udecode/plate-font';
 
 import { Icons } from '@/components/icons';
 import { CommentToolbarButton } from '@/components/plate-ui/comment-toolbar-button';
 import { LinkToolbarButton } from '@/components/plate-ui/link-toolbar-button';
+import { ColorDropdownMenu } from '@/components/plate-ui/color-dropdown-menu';
 
 import { MarkToolbarButton } from './mark-toolbar-button';
-import { MoreDropdownMenu } from './more-dropdown-menu';
+// import { MoreDropdownMenu } from './more-dropdown-menu';
 import { TurnIntoDropdownMenu } from './turn-into-dropdown-menu';
 
 export function FloatingToolbarButtons() {
@@ -48,12 +50,17 @@ export function FloatingToolbarButtons() {
           </MarkToolbarButton>
 
           <LinkToolbarButton />
+
+          <ColorDropdownMenu nodeType={MARK_COLOR} tooltip="Text Color">
+            <Icons.color />
+          </ColorDropdownMenu>
+          <ColorDropdownMenu nodeType={MARK_BG_COLOR} tooltip="Highlight Color">
+            <Icons.bg />
+          </ColorDropdownMenu>
         </>
       )}
 
       <CommentToolbarButton />
-
-      <MoreDropdownMenu />
     </>
   );
 }

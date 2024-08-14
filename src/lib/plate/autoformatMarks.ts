@@ -80,6 +80,6 @@ export const autoformatMarks: MyAutoformatRule[] = [
   {
     mode: 'mark',
     type: MARK_CODE,
-    match: '`',
+    match: ['`', '·'],
   },
 ];
