@@ -15,20 +15,25 @@ import { FixedToolbar } from '@/components/plate-ui/fixed-toolbar';
 import { FixedToolbarButtons } from '@/components/plate-ui/fixed-toolbar-buttons';
 import { Button } from '@/components/plate-ui/button';
 import { Editor } from '@/components/plate-ui/editor';
+
 import { writeTextFile } from '@tauri-apps/api/fs';
 import { save } from '@tauri-apps/api/dialog';
 import { join } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/tauri';
 
 import { plugins } from '@/lib/plate/plate-plugins';
+
 import initV from "@/assets/initialValue.json";
+
 import { useFont } from '@/lib/font-context';
 import { nanoid } from 'nanoid';
 
 export function PlateEditor() {
   const { font } = useFont();
+  
   const [editor] = useState(() => createPlateEditor({ plugins, id: 'main-editor' }));
   const editorId = useMemo(() => nanoid(), []);
+
   const initialValue = JSON.parse(JSON.stringify(initV));
 
   const handleSaveJson = async () => {
