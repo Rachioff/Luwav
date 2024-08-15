@@ -1,5 +1,6 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+mod models;
+
+use models::cluster::Cluster;
 
 #[tauri::command]
 fn get_notes_dir(app_handle: tauri::AppHandle) -> Result<String, String> {
@@ -19,7 +20,6 @@ fn get_notes_dir(app_handle: tauri::AppHandle) -> Result<String, String> {
 }
 
 fn main() {
-  tauri::Builder::default()
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    println!("Hi, here is the backend of Luwav");
+
 }

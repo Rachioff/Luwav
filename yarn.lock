@@ -1224,7 +1224,7 @@
 
 "@tauri-apps/cli@^1.6.0":
   version "1.6.0"
-  resolved "https://registry.npmmirror.com/@tauri-apps/cli/-/cli-1.6.0.tgz#cd1b54c2774291fb879d9b5ae5f70cf253f48c25"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/cli/-/cli-1.6.0.tgz#cd1b54c2774291fb879d9b5ae5f70cf253f48c25"
   integrity sha512-DBBpBl6GhTzm8ImMbKkfaZ4fDTykWrC7Q5OXP4XqD91recmDEn2LExuvuiiS3HYe7uP8Eb5B9NPHhqJb+Zo7qQ==
   optionalDependencies:
     "@tauri-apps/cli-darwin-arm64" "1.6.0"
