@@ -22,7 +22,7 @@ export const MediaToolbarButton = withRef<
     <ToolbarButton
       ref={ref}
       {...rest}
-      onClick={async (e) => {
+      onClick={async (_e) => {
         console.log('Media button clicked');
         try {
           console.log('Before calling props.onClick');

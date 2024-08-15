@@ -219,6 +219,7 @@ export const plugins = createPlugins(
             ELEMENT_H1,
             ELEMENT_H2,
             ELEMENT_H3,
+            ELEMENT_H4,
             ELEMENT_BLOCKQUOTE,
             ELEMENT_CODE_BLOCK,
           ],
