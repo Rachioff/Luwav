@@ -199,7 +199,13 @@ export const plugins = createPlugins(
     createAlignPlugin({
       inject: {
         props: {
-          validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3],
+          validTypes: [
+            ELEMENT_PARAGRAPH, 
+            ELEMENT_H1, 
+            ELEMENT_H2, 
+            ELEMENT_H3, 
+            ELEMENT_IMAGE, 
+            ELEMENT_MEDIA_EMBED],
         },
       },
     }),

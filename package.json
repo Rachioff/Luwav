@@ -33,7 +33,8 @@
     "@udecode/plate-code-block": "^36.0.0",
     "@udecode/plate-combobox": "^36.0.0",
     "@udecode/plate-comments": "^36.0.0",
-    "@udecode/plate-common": "^36.3.4",
+    "@udecode/plate-common": "^36.3.9",
+    "@udecode/plate-core": "^36.3.9",
     "@udecode/plate-cursor": "^36.0.0",
     "@udecode/plate-dnd": "^36.0.8",
     "@udecode/plate-emoji": "^36.0.0",
@@ -86,7 +87,8 @@
     "slate-hyperscript": "^0.100.0",
     "slate-react": "^0.107.1",
     "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

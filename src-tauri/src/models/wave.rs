@@ -5,6 +5,7 @@
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+<<<<<<< Updated upstream
 
 
 
@@ -13,19 +14,38 @@ pub struct Wave {
     pub frequency: WaveMetadata,
     pub shape: WaveShape,
     pub parent: &Cluster,
+=======
+use crate::models::cluster::Cluster;
+
+
+pub struct Wave <'a>{
+    frequency: WaveMetadata,
+    shape: WaveShape,
+    parent: &'a Cluster<'a>,
+>>>>>>> Stashed changes
 }
 
 // =============================================================================================================
 
+<<<<<<< Updated upstream
 #[derive(Serialize, Deserialize, Debug, Clone)]
+=======
+
+>>>>>>> Stashed changes
 enum WaveShape {
     Swell(WaveContent), // 用于表示正在编辑的Wave，会有内容
     Ripple, // 用于表示不在编辑的Wave，没有内容只有元数据
 }
 
+<<<<<<< Updated upstream
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct WaveMetadata {
     pub id: Uuid, 
+=======
+
+pub struct WaveMetadata {
+    pub id: usize, 
+>>>>>>> Stashed changes
     pub title: String, // title: 笔记标题
     pub created_at: DateTime<Local>, // created_at: 笔记创建时间
     pub updated_at: DateTime<Local>, // updated_at: 笔记更新时间
@@ -34,11 +54,18 @@ pub struct WaveMetadata {
 }
 
 impl WaveMetadata {
+<<<<<<< Updated upstream
     pub fn init_data() -> Self {
         let id = uuid::Uuid::new_v4();
         Wavemetadata {
             id,
             title: "Untitled".to_string(),
+=======
+    pub fn init_data(id: usize) -> Self {
+        WaveMetadata {
+            id,
+            title: "Untitled".to_string(), // 这里要防止是否在同一路径下有相同名字
+>>>>>>> Stashed changes
             tags: None,
             created_at: chrono::Local::now(),
             updated_at: chrono::Local::now(),

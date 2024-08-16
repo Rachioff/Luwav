@@ -19,6 +19,12 @@ fn get_notes_dir(app_handle: tauri::AppHandle) -> Result<String, String> {
         .map(String::from)
 }
 
+mod models;
+use models::cluster::Cluster;
+use models::origin::Origin;
+use models::tsunami::Tsunami;
+use models::wave::Wave;
+
 fn main() {
     println!("Hi, here is the backend of Luwav");
 
