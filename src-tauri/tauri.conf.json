@@ -22,7 +22,7 @@
       },
       "fs": {
         "all": true,
-        "scope": ["$RESOURCE/*", "$RESOURCE/../notes/*", "$APPDATA/*", "$APPDATA/notes/*"],
+        "scope": ["$APPDATA/*", "$APPDATA/images/*", "$RESOURCE/*", "$RESOURCE/../notes/*"],
         "writeFile": true,
         "readDir": true,
         "readFile": true,
@@ -34,6 +34,10 @@
       },
       "path": {
         "all": true
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["**"]
       },
       "dialog": {
         "all": true,

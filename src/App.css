@@ -8,6 +8,43 @@
   text-align: left;
 }
 
+body {
+  background-color: hsl(var(--background-color));
+  color: hsl(var(--text-color));
+}
+
+:root {
+  /* 现有的变量 */
+  --background-color: var(--background);
+  --text-color: var(--foreground);
+}
+
+.dark {
+  /* 现有的暗色模式变量 */
+  --background-color: var(--background);
+  --text-color: var(--foreground);
+}
+
+.dark .info-sidebar {
+  background-color: rgba(220, 225, 235, 0.05); /* 略带蓝色的半透明背景 */
+}
+
+.dark .toolbar-container .fixed-toolbar {
+  background-color: hsl(var(--background));
+  border-bottom-color: hsl(var(--border));
+}
+
+.dark .save-button1 {
+  box-shadow: 0 0 10px rgba(var(--primary), 0.3);
+  background-color: hsl(var(--primary-light, 217.2 27.9% 53%));
+  color: hsl(var(--primary-foreground));
+}
+
+.dark .save-button1:hover {
+  box-shadow: 0 0 15px rgba(var(--primary), 0.5);
+  background-color: hsl(var(--primary-dark, 217.2 55.2% 50.2%));
+}
+
 .container {
   min-width: 300px;
 }
@@ -71,28 +108,42 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
+
+    --scrollbar-bg: #f0f0f0;
+    --scrollbar: #c1c1c1;
   }
  
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 220 20% 10%; /* 深蓝黑色背景 */
+    --foreground: 220 15% 87%; /* 柔和的浅灰蓝色文本 */
+    
+    --card: 220 25% 15%;
+    --card-foreground: 220 15% 80%;
+    
+    --popover: 220 25% 15%;
+    --popover-foreground: 220 15% 80%;
+    
+    --primary: 217 70% 50%; /* 稍微柔和的蓝色 */
+    --primary-foreground: 220 15% 90%;
+    
+    --secondary: 220 30% 20%;
+    --secondary-foreground: 220 15% 80%;
+    
+    --muted: 220 25% 25%;
+    --muted-foreground: 220 15% 60%;
+    
+    --accent: 220 30% 25%;
+    --accent-foreground: 220 15% 80%;
+    
+    --destructive: 0 60% 40%; /* 柔和的红色 */
+    --destructive-foreground: 220 15% 90%;
+    
+    --border: 220 25% 20%;
+    --input: 220 25% 20%;
+    --ring: 224 60% 50%;
+
+    --scrollbar-bg: hsl(220 20% 15%);
+    --scrollbar: hsl(220 20% 30%);
   }
 }
 
@@ -128,6 +179,36 @@ button:focus-visible {
   background-color: white;
   z-index: 10;
   border-bottom: 1px solid #ccc;
+}
+
+/* 滚动条样式 */
+
+
+* {
+  scrollbar-width: auto;
+  scrollbar-color: var(--scrollbar) var(--scrollbar-bg);
+}
+
+.editor-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.editor-content::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar);
+  border-radius: 6px;
+  border: 100px solid var(--scrollbar-bg);
+}
+
+.editor-content::-webkit-scrollbar:hover {
+  width: 100px;
+}
+
+.dark .editor-content::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+.dark .editor-content::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted));
+  border: 2px solid hsl(var(--background));
 }
 
 /* 在 src/App.css 文件中添加或修改以下样式 */
@@ -342,20 +423,6 @@ button:disabled {
   border-bottom: 1px solid var(--border);
 }
 
-/* 自定义滚动条样式 */
-.editor-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.editor-content::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-.editor-content::-webkit-scrollbar-thumb {
-  background-color: var(--muted);
-  border-radius: 4px;
-  border: 2px solid var(--background);
-}
 
 /* 调整 App 容器样式 */
 .App {
@@ -407,4 +474,26 @@ body {
 
 [data-font="Song"] {
   --font-family: var(--font-song);
+}
+
+/* 自定义下划线样式 */
+[data-slate-node="text"] u,
+[data-slate-leaf] u {
+  text-decoration: none;
+  background-image: linear-gradient(to bottom, transparent 60%, currentColor 60%);
+  background-repeat: repeat-x;
+  background-size: 1px 4px;
+  background-position: 0 1.01em;
+  padding-bottom: 0.3em;
+}
+
+/* 针对不同字体大小调整下划线位置 */
+.slate-h1 [data-slate-node="text"] u,
+.slate-h1 [data-slate-leaf] u {
+  background-position: 0 1.1em;
+}
+
+.slate-h2 [data-slate-node="text"] u,
+.slate-h2 [data-slate-leaf] u {
+  background-position: 0 1.05em;
 }

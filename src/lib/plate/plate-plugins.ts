@@ -149,6 +149,8 @@ import { TodoListElement } from '@/components/plate-ui/todo-list-element';
 import { withDraggables } from '@/components/plate-ui/with-draggables';
 import { TabbableElement } from '@/components/tabbable-element';
 
+import { handleImageUpload } from '@/lib/plate/handleImageUpload.ts'; 
+
 const resetBlockTypesCommonRule = {
   types: [ELEMENT_BLOCKQUOTE, ELEMENT_TODO_LI],
   defaultType: ELEMENT_PARAGRAPH,
@@ -171,7 +173,11 @@ export const plugins = createPlugins(
     createLinkPlugin({
       renderAfterEditable: LinkFloatingToolbar as RenderAfterEditable,
     }),
-    createImagePlugin(),
+    createImagePlugin({
+      options: {
+        uploadImage: handleImageUpload,
+      },
+    }),
     createMediaEmbedPlugin(),
     createCaptionPlugin({
       options: { pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED] },
@@ -199,7 +205,14 @@ export const plugins = createPlugins(
     createAlignPlugin({
       inject: {
         props: {
-          validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3],
+          validTypes: [
+            ELEMENT_PARAGRAPH, 
+            ELEMENT_H1, 
+            ELEMENT_H2, 
+            ELEMENT_H3,
+            ELEMENT_IMAGE, 
+            ELEMENT_MEDIA_EMBED
+          ],
         },
       },
     }),
