@@ -31,10 +31,10 @@ import { ModeDropdownMenu } from './mode-dropdown-menu';
 import { ToolbarGroup } from './toolbar';
 import { TurnIntoDropdownMenu } from './turn-into-dropdown-menu';
 
-const TOOLBAR_BREAKPOINT_FULL = 1280;
-const TOOLBAR_BREAKPOINT_MEDIUM = 1100;
-const TOOLBAR_BREAKPOINT_MEDIUM_COMPACT = 900;
-const TOOLBAR_BREAKPOINT_COMPACT = 750;
+const TOOLBAR_BREAKPOINT_FULL = 1480;
+const TOOLBAR_BREAKPOINT_MEDIUM = 1300;
+const TOOLBAR_BREAKPOINT_MEDIUM_COMPACT = 1200;
+const TOOLBAR_BREAKPOINT_COMPACT = 950;
 
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
