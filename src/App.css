@@ -235,17 +235,6 @@ button:focus-visible {
   color: inherit;
 }
 
-
-
-
-/* 防止工具栏和其他UI元素被选中 */
-[contenteditable="false"],
-.slate-toolbar,
-.slate-floating-toolbar {
-  user-select: none !important;
-}
-
-
 .color-picker-button {
   max-width: 20px;
   max-height: 20px;
