@@ -211,29 +211,8 @@ button:focus-visible {
   border: 2px solid hsl(var(--background));
 }
 
-/* 在 src/App.css 文件中添加或修改以下样式 */
 
-/* 重置全局选择样式 */
-::selection {
-  background-color: transparent;
-}
-
-/* 编辑器容器样式 */
-[data-slate-editor="true"] {
-  user-select: text;
-}
-
-/* 为所有文本节点设置选择样式 */
-[data-slate-node="text"],
-[data-slate-leaf] span {
-  background-color: transparent;
-}
-
-[data-slate-node="text"]::selection,
-[data-slate-leaf] span::selection {
-  background-color: rgba(176, 196, 222, 0.4) !important; /* 灰蓝色，带有透明度 */
-  color: inherit;
-}
+/* ============================ */
 
 .color-picker-button {
   max-width: 20px;

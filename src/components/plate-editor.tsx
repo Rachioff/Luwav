@@ -75,26 +75,6 @@ export function PlateEditor() {
     }
   };
 
-  // const handleDrop = useCallback(async (event: React.DragEvent<HTMLDivElement>) => {
-  //   event.preventDefault();
-  //   const file = event.dataTransfer.files[0];
-  //   if (file && file.type.startsWith('image/')) {
-  //     try {
-  //       const fileContents = await file.arrayBuffer();
-  //       const savedPath = await invoke('save_dropped_file', { 
-  //         fileContents: Array.from(new Uint8Array(fileContents)),
-  //         fileName: file.name
-  //       });
-        
-  //       insertMedia(editor, {
-  //         getUrl: () => Promise.resolve(savedPath as string),
-  //         type: ELEMENT_IMAGE,
-  //       });
-  //     } catch (error) {
-  //       console.error('Error handling dropped file:', error);
-  //     }
-  //   }
-  // }, [editor]);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -102,8 +82,6 @@ export function PlateEditor() {
         <div 
         className="plate-container" 
         data-font={font}
-        // onDragOver={(e) => e.preventDefault()}
-        // onDrop={handleDrop}
         >
             <div className="info-sidebar">
               <Button disabled className="save-button" onClick={handleSave}>Save</Button>

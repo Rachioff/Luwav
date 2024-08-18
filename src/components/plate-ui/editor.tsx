@@ -81,7 +81,7 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>(
           style={{ 
             fontFamily: `var(--font-${font.toLowerCase()})` ,
             letterSpacing: '0.02em' 
-          }} // 应用字体
+          }} 
           {...props}
         />
       </div>

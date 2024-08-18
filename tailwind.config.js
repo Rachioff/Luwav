@@ -6,13 +6,14 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './src/*.{ts,tsx}',
 	],
   prefix: '',
   theme: {
     container: {
       center: false,
 
-      padding: '2rem',
+      padding: '1rem',
       screens: {
         '2xl': '1400px',
       },
@@ -20,8 +21,7 @@ module.exports = {
     extend: {
       extend: {
         fontFamily: {
-          sans: ['var(--font-kai)', 'sans-serif'],
-          // sans: ['var(--font-default)', 'system-ui', 'sans-serif'],
+          sans: ['var(--font-default)', 'system-ui', 'sans-serif'],
           kai: ['var(--font-kai)', 'sans-serif'],
           imitationSong: ['var(--font-imitationsong)', 'serif'],
           song: ['var(--font-song)', 'serif'],
