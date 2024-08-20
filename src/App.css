@@ -1,0 +1,432 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    transition: background-color 0.3s ease;
+}
+
+/* 默认（浅色）主题 */
+html {
+    background-color: #EEF2F6;
+}
+
+/* 暗色主题 */
+html[data-theme="dark"] {
+    background-color: #1A2327;
+}
+
+/* 确保 body 填满整个视口 */
+body {
+    min-height: 100vh;
+}
+
+#root {
+    min-height: 100vh;
+}
+
+.subtle-ocean-editor {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+  background-color: #FAFBFC;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(84, 110, 122, 0.1);
+}
+
+/* Editor container */
+.subtle-ocean-editor .bn-container {
+  background: #FAFBFC;
+  box-shadow: 0 2px 4px rgba(84, 110, 122, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.subtle-ocean-editor .bn-editor {
+  padding: 40px;
+}
+
+/* Block styles */
+.subtle-ocean-editor .bn-block {
+  margin-bottom: 0.5em;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.subtle-ocean-editor .bn-block:hover {
+  background-color: rgba(120, 144, 156, 0.05);
+  /* transform: translateX(2px); */
+}
+
+.subtle-ocean-editor .bn-block:focus-within {
+  background-color: rgba(46, 50, 52, 0.492);
+}
+
+/* Heading styles */
+.subtle-ocean-editor [data-content-type='heading'][data-level='1'] {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: #455A64;
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+}
+
+.subtle-ocean-editor [data-content-type='heading'][data-level='2'] {
+  font-size: 1.875em;
+  font-weight: 600;
+  color: #546E7A;
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+}
+
+.subtle-ocean-editor [data-content-type='heading'][data-level='3'] {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #607D8B;
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+}
+
+/* Paragraph styles */
+.subtle-ocean-editor [data-content-type='paragraph'] {
+  font-size: 1em;
+  /* line-height: 1.6; */
+  color: #37474F;
+}
+
+/* List styles */
+.subtle-ocean-editor [data-content-type='bulletListItem'],
+.subtle-ocean-editor [data-content-type='numberedListItem'] {
+  margin-left: 1.5em;
+  color: #37474F;
+}
+
+/* Inline styles */
+.subtle-ocean-editor strong {
+  font-weight: 600;
+  color: #455A64;
+}
+
+.subtle-ocean-editor em {
+  font-style: italic;
+  color: #546E7A;
+}
+
+.subtle-ocean-editor code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  background: rgba(120, 144, 156, 0.1);
+  color: #455A64;
+  border-radius: 4px;
+  font-size: 85%;
+  padding: 0.2em 0.4em;
+}
+
+/* Side menu button styles */
+  
+  .subtle-ocean-editor .bn-side-menu .mantine-ActionIcon-root:hover {
+    background-color: #999da12e;
+    border-radius: 9px;
+    color: #6d838e;
+  }
+  
+  /* Ensure SVG icons inside buttons are visible */
+  .subtle-ocean-editor .bn-side-menu .mantine-ActionIcon-icon svg {
+    fill: currentColor;
+    color: #96a1a7;
+  }
+  
+  /* Adjust side menu container */
+  .subtle-ocean-editor .bn-side-menu {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+  }
+  
+  /* Make side menu more visible when hovering over blocks */
+  .subtle-ocean-editor .bn-block:hover .bn-side-menu {
+    opacity: 0;
+  }
+  
+  /* Add a subtle transition for smoother appearance */
+  .subtle-ocean-editor .bn-side-menu {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  /* Ensure buttons are visible even when not hovering */
+  .subtle-ocean-editor .bn-side-menu .bn-button,
+  .subtle-ocean-editor .bn-side-menu .mantine-ActionIcon-root {
+    opacity: 0.7;
+    color: #B0BEC5;
+  }
+  
+  .subtle-ocean-editor .bn-side-menu:hover .bn-button,
+  .subtle-ocean-editor .bn-side-menu:hover .mantine-ActionIcon-root {
+    opacity: 1;
+  }
+
+/* Toolbar */
+.subtle-ocean-editor .bn-toolbar {
+  border: 1px solid #ECEFF1;
+  box-shadow: 0 2px 4px rgba(84, 110, 122, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #F5F7F9;
+}
+
+.subtle-ocean-editor .bn-toolbar button {
+  border-radius: 14px;
+  margin: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.subtle-ocean-editor .bn-toolbar button:hover {
+  background-color: rgba(85, 99, 106, 0.1);
+}
+
+/* Placeholder text */
+.subtle-ocean-editor [data-placeholder]:empty:before {
+  color: #B0BEC5;
+}
+
+/* Focus styles */
+.subtle-ocean-editor .bn-block:focus-within {
+  background-color: rgba(120, 144, 156, 0.05);
+}
+
+/* Custom scrollbar */
+.subtle-ocean-editor ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.subtle-ocean-editor ::-webkit-scrollbar-track {
+  background: #EEF2F6;
+}
+
+.subtle-ocean-editor ::-webkit-scrollbar-thumb {
+  background: #B0BEC5;
+  border-radius: 3px;
+}
+
+.subtle-ocean-editor ::-webkit-scrollbar-thumb:hover {
+  background: #90A4AE;
+}
+
+/* Additional subtle ocean-inspired elements */
+.subtle-ocean-editor::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: linear-gradient(135deg, rgba(84, 110, 122, 0.05) 0%, rgba(176, 190, 197, 0.05) 100%);
+  z-index: -1;
+  border-radius: 12px;
+  opacity: 0.6;
+}
+
+.subtle-ocean-editor::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="%23FFFFFF" width="100" height="100"/><path d="M0 0L100 100ZM100 0L0 100Z" stroke="%23ECEFF1" stroke-width="0.5"/></svg>'); */
+  opacity: 0.3;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 文本选择样式 */
+.subtle-ocean-editor *::selection {
+    background-color: rgba(120, 144, 156, 0.3) !important; /* 灰蓝色，带有透明度 */
+    color: #37474F !important; /* 深色文本，确保在选中时可读 */
+  }
+
+/* 保留之前的所有样式 */
+
+/* 新增主题切换相关样式 */
+.app-container {
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .app-container.light {
+    background-color: #EEF2F6;
+    color: #37474F;
+  }
+  
+  .app-container.dark {
+    background-color: #1A2327;
+    color: #E0E0E0;
+  }
+  
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 5px;
+    border-radius: 20px;
+  }
+  
+  .theme-toggle button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .theme-toggle button:hover {
+    background-color: rgba(120, 144, 156, 0.2);
+    transform: scale(1.1);
+  }
+  
+  .theme-toggle button.active {
+    background-color: rgba(120, 144, 156, 0.3);
+  }
+  
+  .theme-toggle .icon {
+    width: 20px;
+    height: 20px;
+    color: currentColor;
+  }
+  
+  /* 深色模式下的样式调整 */
+  .dark .subtle-ocean-editor {
+    background-color: #263238;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dark .subtle-ocean-editor .bn-container {
+    background: #263238;
+  }
+  
+  .dark .subtle-ocean-editor [data-content-type='heading'][data-level='1'],
+  .dark .subtle-ocean-editor [data-content-type='heading'][data-level='2'],
+  .dark .subtle-ocean-editor [data-content-type='heading'][data-level='3'],
+  .dark .subtle-ocean-editor [data-content-type='paragraph'],
+  .dark .subtle-ocean-editor [data-content-type='bulletListItem'],
+  .dark .subtle-ocean-editor [data-content-type='numberedListItem'] {
+    color: #E0E0E0;
+  }
+  
+  .dark .subtle-ocean-editor .bn-toolbar {
+    background-color: #37474F;
+    border-color: #455A64;
+  }
+  
+  .dark .subtle-ocean-editor .bn-toolbar button:hover {
+    background-color: rgba(176, 190, 197, 0.1);
+  }
+  
+  .dark .subtle-ocean-editor ::-webkit-scrollbar-track {
+    background: #37474F;
+  }
+  
+  .dark .subtle-ocean-editor ::-webkit-scrollbar-thumb {
+    background: #546E7A;
+  }
+  
+  .dark .subtle-ocean-editor ::-webkit-scrollbar-thumb:hover {
+    background: #78909C;
+  }
+  
+  /* 文本选择样式调整 */
+  .dark .subtle-ocean-editor *::selection {
+    background-color: rgba(176, 190, 197, 0.3) !important;
+    color: #E0E0E0 !important;
+  }
+  
+  /* 确保编辑器容器不会被背景色覆盖 */
+  .subtle-ocean-editor {
+    background-color: #FAFBFC;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .dark .subtle-ocean-editor {
+    background-color: #263238;
+  }
+  
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 5px;
+    border-radius: 20px;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    overflow: hidden;
+  }
+  
+  .theme-toggle.expanded {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .theme-toggle button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .theme-toggle button:hover {
+    background-color: rgba(120, 144, 156, 0.2);
+    transform: scale(1.1) rotate(10deg);
+  }
+  
+  .theme-toggle button.active {
+    background-color: rgba(120, 144, 156, 0.3);
+  }
+  
+  .theme-toggle .icon {
+    width: 20px;
+    height: 20px;
+    color: currentColor;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  }
+  
+  /* 确保在暗色模式下图标可见 */
+  .dark .theme-toggle .icon {
+    color: #E0E0E0;
+  }
+  
+  /* 展开和收起的动画效果 */
+  .theme-toggle:not(.expanded) button:not(.active) {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  
+  .theme-toggle.expanded button {
+    width: 30px;
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  
+  .theme-toggle.expanded button {
+    animation: bounce 0.5s ease infinite;
+  }
