@@ -2,9 +2,24 @@ import { useState, useEffect } from 'react';
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView, Theme } from "@blocknote/mantine";
 import ThemeToggle from './ThemeToggle';
+import { FontToggle } from './FontToggle';
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import "./App.css";
+
+const fonts = [
+  { name: 'Default', label: '默认', value: 'var(--font-default)' },
+  { name: 'Kai', label: '楷体', value: 'var(--font-kai)' },
+  { name: 'ImitationSong', label: '仿宋', value: 'var(--font-imitationsong)' },
+  { name: 'Song', label: '宋体', value: 'var(--font-song)' },
+];
+
+// 定义一个扩展的 Theme 类型，确保包含 fontFamily
+interface ExtendedTheme extends Theme {
+  fontFamily: string;
+}
+
+const defaultFontFamily = 'var(--font-default)';
 
 const lightTheme: Theme = {
   colors: {
@@ -37,7 +52,7 @@ const lightTheme: Theme = {
     sideMenu: "#EEF2F6",
   },
   borderRadius: 6,
-  fontFamily: "'Inter', sans-serif",
+  fontFamily: defaultFontFamily,
 };
 
 const darkTheme: Theme = {
@@ -71,14 +86,15 @@ const darkTheme: Theme = {
     sideMenu: "#37474F",
   },
   borderRadius: 6,
-  fontFamily: "'Inter', sans-serif",
+  fontFamily: defaultFontFamily,
 };
 
 type ThemeMode = 'light' | 'dark' | 'system';
 
 export default function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
-  const [currentTheme, setCurrentTheme] = useState<Theme>(lightTheme);
+  const [currentTheme, setCurrentTheme] = useState<ExtendedTheme>(darkTheme as ExtendedTheme);
+  const [currentFont, setCurrentFont] = useState(fonts[0].name);
 
   useEffect(() => {
     const updateTheme = () => {
@@ -86,16 +102,33 @@ export default function App() {
         themeMode === 'dark' || 
         (themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
       
-      setCurrentTheme(isDarkMode ? darkTheme : lightTheme);
-      document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+      setCurrentTheme(prevTheme => ({
+        ...(isDarkMode ? darkTheme : lightTheme),
+        fontFamily: prevTheme.fontFamily || defaultFontFamily, // 确保 fontFamily 总是有值
+      }));
     };
-
+  
     updateTheme();
-
+  
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addListener(updateTheme);
-
+  
     return () => mediaQuery.removeListener(updateTheme);
+  }, [themeMode]);
+  
+  useEffect(() => {
+    setCurrentTheme(prevTheme => ({
+      ...prevTheme,
+      fontFamily: fonts.find(font => font.name === currentFont)?.value || defaultFontFamily
+    }));
+  }, [currentFont]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 
+      themeMode === 'system' 
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themeMode
+    );
   }, [themeMode]);
 
   const editor = useCreateBlockNote({
@@ -113,9 +146,12 @@ export default function App() {
 
   return (
     <div className={`app-container ${themeMode}`}>
-      <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} />
+      <div className="controls">
+        <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} />
+        <FontToggle currentFont={currentFont} setCurrentFont={setCurrentFont} fonts={fonts} />
+      </div>
       <div className="subtle-ocean-editor">
-        <BlockNoteView editor={editor} theme={currentTheme} />
+        <BlockNoteView editor={editor} theme={currentTheme} data-font={currentFont} />
       </div>
     </div>
   );

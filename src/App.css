@@ -1,28 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 更新 HTML 和 body 的背景色样式 */
 html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    transition: background-color 0.3s ease;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  transition: background-color 0.8s ease, color 0.8s ease;
 }
 
 /* 默认（浅色）主题 */
 html {
-    background-color: #EEF2F6;
+  background-color: #EEF2F6;
+  color: #37474F;
 }
 
 /* 暗色主题 */
 html[data-theme="dark"] {
-    background-color: #1A2327;
-}
-
-/* 确保 body 填满整个视口 */
-body {
-    min-height: 100vh;
+  background-color: #1A2327;
+  color: #E0E0E0;
 }
 
 #root {
@@ -53,12 +51,15 @@ body {
 
 /* Block styles */
 .subtle-ocean-editor .bn-block {
-  margin-bottom: 0.5em;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease, padding 0.2s ease, margin 0.2s ease;
+  border-radius: 0.5em;
+  padding: 0.25em 0.25em; /* 增加内边距 */
+  margin:  -0.25em; /* 负外边距来抵消增加的宽度 */
 }
 
 .subtle-ocean-editor .bn-block:hover {
   background-color: rgba(120, 144, 156, 0.05);
+  border-radius: 0.5em;
   /* transform: translateX(2px); */
 }
 
@@ -94,7 +95,7 @@ body {
 /* Paragraph styles */
 .subtle-ocean-editor [data-content-type='paragraph'] {
   font-size: 1em;
-  /* line-height: 1.6; */
+  line-height: 1.5;
   color: #37474F;
 }
 
@@ -195,6 +196,7 @@ body {
 /* Focus styles */
 .subtle-ocean-editor .bn-block:focus-within {
   background-color: rgba(120, 144, 156, 0.05);
+  
 }
 
 /* Custom scrollbar */
@@ -266,43 +268,7 @@ body {
     background-color: #1A2327;
     color: #E0E0E0;
   }
-  
-  .theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    display: flex;
-    gap: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 5px;
-    border-radius: 20px;
-  }
-  
-  .theme-toggle button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .theme-toggle button:hover {
-    background-color: rgba(120, 144, 156, 0.2);
-    transform: scale(1.1);
-  }
-  
-  .theme-toggle button.active {
-    background-color: rgba(120, 144, 156, 0.3);
-  }
-  
-  .theme-toggle .icon {
-    width: 20px;
-    height: 20px;
-    color: currentColor;
-  }
-  
+
   /* 深色模式下的样式调整 */
   .dark .subtle-ocean-editor {
     background-color: #263238;
@@ -359,74 +325,343 @@ body {
     background-color: #263238;
   }
   
-  .theme-toggle {
+/* 统一 ThemeToggle 和 FontToggle 样式 */
+.theme-toggle,
+.font-toggle {
     position: fixed;
-    top: 20px;
-    right: 20px;
     z-index: 1000;
     display: flex;
-    gap: 5px;
+    align-items: center;
     background-color: rgba(255, 255, 255, 0.1);
-    padding: 5px;
     border-radius: 20px;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    overflow: hidden;
-  }
-  
-  .theme-toggle.expanded {
+    padding: 3px;
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.theme-toggle {
+  top: 20px;
+  right: 20px;
+}
+
+.font-toggle {
+  top: 60px;
+  right: 20px;
+}
+
+.theme-toggle:hover,
+.font-toggle:hover {
+    transform: translateX(-5px);
     background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  .theme-toggle button {
-    background: none;
+}
+
+.theme-toggle button,
+.font-toggle-button {
+    background: rgba(255, 255, 255, 0.2);
     border: none;
     cursor: pointer;
     padding: 5px;
     border-radius: 50%;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-  }
-  
-  .theme-toggle button:hover {
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.theme-toggle button:hover,
+.font-toggle-button:hover {
     background-color: rgba(120, 144, 156, 0.2);
-    transform: scale(1.1) rotate(10deg);
-  }
-  
-  .theme-toggle button.active {
-    background-color: rgba(120, 144, 156, 0.3);
-  }
-  
-  .theme-toggle .icon {
+    transform: scale(1.1);
+}
+
+.theme-toggle .icon,
+.font-toggle .icon {
     width: 20px;
     height: 20px;
     color: currentColor;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  }
-  
-  /* 确保在暗色模式下图标可见 */
-  .dark .theme-toggle .icon {
-    color: #E0E0E0;
-  }
-  
-  /* 展开和收起的动画效果 */
-  .theme-toggle:not(.expanded) button:not(.active) {
-    width: 0;
-    padding: 0;
-    opacity: 0;
-    transform: scale(0) rotate(-180deg);
-  }
-  
-  .theme-toggle.expanded button {
-    width: 30px;
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
+}
 
-  
-  .theme-toggle.expanded button {
-    animation: bounce 0.5s ease infinite;
-  }
+.theme-toggle button.active {
+  background-color: rgba(120, 144, 156, 0.3);
+}
+
+.theme-toggle.expanded {
+  background-color: rgba(255, 255, 255, 0.2);
+  gap: 5px;
+}
+
+.theme-toggle button.active {
+  background-color: rgba(120, 144, 156, 0.3);
+}
+
+/* 展开和收起的动画效果 */
+.theme-toggle:not(.expanded) button:not(.active) {
+  width: 0;
+  padding: 0;
+  opacity: 0;
+  transform: scale(0) rotate(-180deg);
+}
+
+.theme-toggle.expanded button {
+  width: 30px;
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.theme-toggle.expanded button {
+  animation: bounce 0.5s ease infinite;
+}
+
+.font-toggle-label {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.font-toggle:hover .font-toggle-label {
+    opacity: 1;
+    max-width: 150px;
+    padding: 0px 10px;
+}
+
+/* 暗色模式适配 */
+.dark .theme-toggle,
+.dark .font-toggle {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark .theme-toggle button,
+.dark .font-toggle-button {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* 在现有的 App.css 中添加或修改以下样式 */
+
+.controls {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+}
+
+/* 在现有的 App.css 中更新以下样式 */
+/* 字体特定样式 */
+.font-default {
+  font-family: var(--font-default);
+}
+
+.font-kai {
+  font-family: var(--font-kai);
+}
+
+.font-imitationsong {
+  font-family: var(--font-imitationsong);
+}
+
+.font-song {
+  font-family: var(--font-song);
+}
+
+.font-toggle-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: #37474F;
+  cursor: pointer;
+  text-align: left;
+  transition: all 1s ease;
+}
+
+.font-toggle-label {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  cursor: pointer;
+  padding: 0px 0px;
+  margin-left: 0px;
+}
+
+.font-toggle:hover .font-toggle-label {
+  opacity: 1;
+  max-width: 150px;
+}
+
+.font-toggle-dropdown {
+  position: absolute;
+  top: calc(100% + 0px);
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 150px;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  pointer-events: none;
+}
+
+.font-toggle-dropdown.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.font-toggle-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: #37474F;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.font-toggle-dropdown button:hover {
+  background-color: rgba(120, 144, 156, 0.1);
+}
+
+@keyframes swapOut {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+@keyframes swapIn {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.swap-out {
+  animation: swapOut 0.3s forwards;
+}
+
+.swap-in {
+  animation: swapIn 0.3s forwards;
+}
+
+/* 暗色模式适配 */
+
+.dark .font-toggle-dropdown {
+  background-color: rgba(38, 50, 56, 0.9);
+}
+
+.dark .font-toggle-dropdown button {
+  color: #E0E0E0;
+}
+
+.dark .font-toggle-dropdown button:hover {
+  background-color: rgba(176, 190, 197, 0.1);
+}
+
+/* 应用字体到编辑器 */
+.subtle-ocean-editor {
+  font-family: var(--font-default);
+}
+/* 确保编辑器内容继承字体 */
+.subtle-ocean-editor .bn-container,
+.subtle-ocean-editor .bn-editor {
+  font-family: inherit;
+}
+
+/* 确保所有文本元素都继承字体 */
+.subtle-ocean-editor [data-content-type],
+.subtle-ocean-editor p,
+.subtle-ocean-editor h1,
+.subtle-ocean-editor h2,
+.subtle-ocean-editor h3,
+.subtle-ocean-editor li {
+  font-family: inherit;
+}
+
+
+/* ... fonts ... */
+
+@font-face {
+  font-family: 'Harmony';
+  src: url('src/assets/fonts/HarmonyOS_Sans_SC_Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Kai';
+  src: url('src/assets/fonts/FangZhengKaiTiJianTi-1.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ImitationSong';
+  src: url('src/assets/fonts/ZhuqueFangsong-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Song';
+  src: url('/src/assets/fonts/SourceHanSerifSC-Regular.otf') format('opentype');
+}
+
+
+/* 字体切换样式 */
+.bn-container[data-font="Default"] .bn-editor * {
+  font-family: var(--font-default);
+}
+
+.bn-container[data-font="Kai"] .bn-editor * {
+  font-family: var(--font-kai);
+  letter-spacing: -0.2px;
+}
+
+.bn-container[data-font="ImitationSong"] .bn-editor * {
+  font-family: var(--font-imitationsong);
+  letter-spacing: -0.1px;
+}
+
+.bn-container[data-font="Song"] .bn-editor * {
+  font-family: var(--font-song);
+}
+
+/* 确保字体变量在全局范围内可用 */
+:root {
+  --font-default: 'Harmony', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-kai: 'Kai', var(--font-default);
+  --font-imitationsong: 'ImitationSong', var(--font-default);
+  --font-song: 'Song', var(--font-default);
+}
+
+/* 粗体样式 */
+.subtle-ocean-editor strong {
+  font-weight: 600;
+  color: inherit; /* 使用继承的颜色 */
+}
+
+/* 斜体样式 */
+.subtle-ocean-editor em {
+  font-style: italic;
+  text-shadow: 1px 1px 1px rgba(74, 72, 72, 0.362); /* 添加微妙的文字阴影 */
+  color: inherit; /* 使用继承的颜色 */
+}
+.dark .subtle-ocean-editor em {
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.636); /* 添加微妙的文字阴影 */
+}
+
+/* 下划线样式 */
+.subtle-ocean-editor u {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px; 
+}
+
+/* 暗色模式下的样式调整 */
+.dark .subtle-ocean-editor strong,
+.dark .subtle-ocean-editor em,
+.dark .subtle-ocean-editor u {
+  color: #E0E0E0; /* 暗色模式下的文本颜色 */
+}
