@@ -13,6 +13,7 @@
     "@blocknote/core": "^0.15.5",
     "@blocknote/mantine": "^0.15.5",
     "@blocknote/react": "^0.15.5",
+    "@tauri-apps/api": "^1.6.0",
     "@tiptap/pm": "^2.6.4",
     "lucide-react": "^0.428.0",
     "prosemirror-model": "^1.11.0",

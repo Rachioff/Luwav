@@ -7,6 +7,9 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import "./App.css";
 
+import { SuggestionMenuController } from "@blocknote/react";
+import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
+
 const fonts = [
   { name: 'Default', label: '默认', value: 'var(--font-default)' },
   { name: 'Kai', label: '楷体', value: 'var(--font-kai)' },
@@ -141,8 +144,61 @@ export default function App() {
         type: "paragraph",
         content: "This space adapts to your preference: light as a sunny beach, dark as the deep sea, or in harmony with your system."
       }
-    ]
+    ],
+    // resolveFileUrl: async (url: string) => {
+    //   try {
+    //     const response = await fetch(url);
+    //     const blob = await response.blob();
+    //     const file = new File([blob], "image.jpg", { type: blob.type });
+    //     const fileBuffer = await file.arrayBuffer();
+    //     const fileArray = new Uint8Array(fileBuffer);
+    //     const relativePath = await invoke('upload_and_backup_file', { 
+    //       file: Array.from(fileArray),
+    //       fileName: file.name
+    //     }) as string;
+    //     console.log(`File uploaded successfully. Relative path: ${relativePath}`);
+  
+    //     // 使用 convertFileSrc 将相对路径转换为可用的 URL
+    //     const url_ = convertFileSrc(relativePath);
+    //     console.log(`Converted URL: ${url_}`);
+        
+    //     // 尝试加载图片
+    //     const img = new Image();
+    //     img.onload = () => console.log("Image loaded successfully");
+    //     img.onerror = (e) => console.error("Error loading image:", e);
+    //     img.src = url_;
+  
+    //     return url_;
+    //   } catch (error) {
+    //     console.error('Error saving image:', error);
+    //     throw error;
+    //   }
+    // },
+    uploadFile: async (file: File) => {
+      try {
+        console.log(`Uploading file: ${file.name}`);
+        const fileBuffer = await file.arrayBuffer();
+        const fileArray = new Uint8Array(fileBuffer);
+        
+        const relativePath = await invoke('upload_and_backup_file', { 
+          file: Array.from(fileArray),
+          fileName: file.name
+        }) as string;
+  
+        console.log(`File uploaded successfully. Relative path: ${relativePath}`);
+  
+        // 使用 convertFileSrc 将相对路径转换为可用的 URL
+        const url = convertFileSrc(relativePath);
+        console.log(`Converted URL: ${url}`);
+  
+        return url;
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+      }
+    }
   });
+
 
   return (
     <div className={`app-container ${themeMode}`}>
@@ -151,7 +207,16 @@ export default function App() {
         <FontToggle currentFont={currentFont} setCurrentFont={setCurrentFont} fonts={fonts} />
       </div>
       <div className="subtle-ocean-editor">
-        <BlockNoteView editor={editor} theme={currentTheme} data-font={currentFont} />
+        <BlockNoteView 
+          editor={editor} 
+          theme={currentTheme} 
+          data-font={currentFont}
+          slashMenu={false}
+        >
+          <SuggestionMenuController
+            triggerCharacter={"/"}
+          />
+        </BlockNoteView>
       </div>
     </div>
   );

@@ -9,6 +9,9 @@ export default defineConfig({
   // Tauri 期望固定端口，如果端口不可用则中止
   server: {
     strictPort: true,
+    fs: {
+      strict: false
+    }
   },
   // 为 Tauri 的 `tauri dev` 命令设置环境变量
   envPrefix: ['VITE_', 'TAURI_'],

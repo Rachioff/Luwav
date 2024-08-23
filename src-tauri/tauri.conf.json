@@ -16,8 +16,28 @@
       "fs": {
         "all": true,
         "scope": [
-          "**"
-        ]
+          "$APPDATA/*",
+          "$APPDATA/media/*",
+          "$RESOURCE/*",
+          "$RESOURCE/../notes/*",
+          "$RESOURCE/../image/*",
+          "$RESOURCE/../audio/*",
+          "$RESOURCE/../video/*",
+          "$RESOURCE/../doc/*"
+        ],
+        "writeFile": true,
+        "readDir": true,
+        "readFile": true,
+        "removeFile": true,
+        "copyFile": true,
+        "createDir": true,
+        "removeDir": true,
+        "exists": true
+      },
+      "protocol": {
+        "all": true,
+        "asset": true,
+        "assetScope": ["**"]
       },
       "dialog": {
         "all": true
@@ -57,7 +77,7 @@
       }
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https: http: data:; style-src 'self' 'unsafe-inline'"
     },
     "updater": {
       "active": false
