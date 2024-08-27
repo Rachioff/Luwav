@@ -91,7 +91,12 @@ const TreeItem: React.FC<{
     e.preventDefault();
     e.stopPropagation();
     const options = [
-      { label: '重命名', action: () => setIsRenaming(true) },
+      { label: '重命名',
+        action: () => {
+          setIsRenaming(true);
+          setContextMenu(null);
+        } 
+      },
       { label: '删除', action: () => handleDelete(node) }
     ];
     
@@ -128,6 +133,10 @@ const TreeItem: React.FC<{
     try {
       if (nodeToDelete.type === 'origin') {
         await invoke('delete_origin', { originId: Number(nodeToDelete.id) });
+      } else if (nodeToDelete.type === 'cluster') {
+        await invoke('delete_cluster', { clusterId: Number(nodeToDelete.id) });
+      } else if (nodeToDelete.type === 'wave') {
+        await invoke('delete_wave', { waveId: Number(nodeToDelete.id) });
       }
       await refreshData();
     } catch (error) {
@@ -138,7 +147,7 @@ const TreeItem: React.FC<{
 
   const handleRename = async () => {
     try {
-      await invoke(`rename_${node.type}`, { id: node.id, newName });
+      await invoke(`rename_${node.type}`, { id: Number(node.id), changeName: newName });
       await refreshData();
       setIsRenaming(false);
     } catch (error) {
@@ -164,7 +173,9 @@ const TreeItem: React.FC<{
             onChange={(e) => setNewName(e.target.value)}
             onBlur={handleRename}
             onKeyPress={(e) => {
-              if (e.key === 'Enter') handleRename();
+              if (e.key === 'Enter') {
+                handleRename()
+              };
             }}
             autoFocus
           />

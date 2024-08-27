@@ -4,13 +4,13 @@ use crate::models::wave::Wave;
 use log::error;
 use app::{OriginMonitor, OriginMonitorError};
 use std::sync::{Arc, Mutex};
-use chrono::{ DateTime, Local };
+// use chrono::{ DateTime, Local };
 
 // =============================================================================================================
 pub struct Cluster {
     pub name: String,
     pub id: i64,
-    pub created_at: DateTime<Local>,
+    // pub created_at: DateTime<Local>,
     pub parent: Arc<Mutex<Origin>>,
     pub child: Vec<Arc<Mutex<Wave>>>,
     pub monitor: Arc<OriginMonitor>,
@@ -25,7 +25,7 @@ impl Cluster {
         let new_cluster = Arc::new(Mutex::new(Cluster {
             name,
             id,
-            created_at: chrono::Local::now(),
+            // created_at: chrono::Local::now(),
             parent: parent.clone(),
             child: vec![],
             monitor,
@@ -61,52 +61,53 @@ impl Cluster {
         Ok(())
     }
 
-    pub fn move_wave_to(
-        from_cluster: Arc<Mutex<Cluster>>, 
-        to_cluster: Arc<Mutex<Cluster>>, 
-        move_wave: Arc<Mutex<Wave>>) 
-    -> Result<(), OriginMonitorError> {
-        let wave_id = move_wave.lock().unwrap().id;
+    // pub fn move_wave_to(
+    //     from_cluster: Arc<Mutex<Cluster>>, 
+    //     to_cluster: Arc<Mutex<Cluster>>, 
+    //     move_wave: Arc<Mutex<Wave>>) 
+    // -> Result<(), OriginMonitorError> {
+    //     let wave_id = move_wave.lock().unwrap().id;
 
-        if let Some(pos) = from_cluster.lock().unwrap().child.iter().position(|rem| {
-            move_wave.lock().unwrap().id == rem.lock().unwrap().id
-        }) {
-            from_cluster.lock().unwrap().child.remove(pos);
-        } else {
-            error!("未找到目标Wave: {}", move_wave.lock().unwrap().title);
-        }
-        to_cluster.lock().unwrap().child.push(move_wave);
+    //     if let Some(pos) = from_cluster.lock().unwrap().child.iter().position(|rem| {
+    //         move_wave.lock().unwrap().id == rem.lock().unwrap().id
+    //     }) {
+    //         from_cluster.lock().unwrap().child.remove(pos);
+    //     } else {
+    //         error!("未找到目标Wave: {}", move_wave.lock().unwrap().title);
+    //     }
+    //     to_cluster.lock().unwrap().child.push(move_wave);
         
-        app::OriginMonitor::move_wave_to(
-            &from_cluster.lock().unwrap().monitor, 
-            from_cluster.lock().unwrap().id, 
-            to_cluster.lock().unwrap().id, 
-            wave_id,
-        )?;
+    //     app::OriginMonitor::move_wave_to(
+    //         &from_cluster.lock().unwrap().monitor, 
+    //         from_cluster.lock().unwrap().id, 
+    //         to_cluster.lock().unwrap().id, 
+    //         wave_id,
+    //     )?;
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 
     pub fn change_name(&mut self, change_name: String) -> Result<(), OriginMonitorError>{
+        if change_name == self.name {return Ok(())}
         let new_name = self.monitor.change_cluster_name(&change_name, self.id)?;
         self.name = new_name;
         Ok(())
     }
 
-    pub fn sort_wave(&mut self, sort_mode: i64, order: i64) {
-        // sort_mode  1： 默认创建时间 2：按字典序
-        // order  1：升序 2：降序
+    // pub fn sort_wave(&mut self, sort_mode: i64, order: i64) {
+    //     // sort_mode  1： 默认创建时间 2：按字典序
+    //     // order  1：升序 2：降序
         
-        if sort_mode == 2 {
-            self.child.sort_by(|a, b| a.lock().unwrap().title.cmp(&b.lock().unwrap().title));
-        } else if sort_mode != 1 { error!("无效的排序方法: {}", sort_mode); }
+    //     if sort_mode == 2 {
+    //         self.child.sort_by(|a, b| a.lock().unwrap().title.cmp(&b.lock().unwrap().title));
+    //     } else if sort_mode != 1 { error!("无效的排序方法: {}", sort_mode); }
 
-        if order == 2 {
-            self.child.reverse();
-        } else if order != 1 {
-            error!("无效的排序顺序: {}", order);
-        }
+    //     if order == 2 {
+    //         self.child.reverse();
+    //     } else if order != 1 {
+    //         error!("无效的排序顺序: {}", order);
+    //     }
         
-    }
+    // }
 
 }

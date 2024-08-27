@@ -4,23 +4,16 @@
 )]
 
 use std::fs;
-use std::string;
 use app::OriginMonitorError;
-use futures::future::ok;
-use models::cluster;
-use tauri::App;
 use tauri::Manager;
 use std::path::Path;
 use std::path::PathBuf;
 use sha2::{Sha256, Digest};
-use reqwest;
-use std::io::Read;
 
 use mime_guess::from_path;
 use mime_guess::mime;
 use log::{info, error};
 
-use std::sync::Arc;
 mod models;
 mod init;
 use models::origin::Origin;
@@ -98,12 +91,12 @@ fn save_file(path: String, content: String) -> Result<(), String> {
     fs::write(path, content).map_err(|e| e.to_string())
 }
 
-#[tauri::command] // 以下是之前为了将URL图片下载下来写的，不过后来发现是协议的问题，这个还有没有用已经忘记了，到时候测试一下
-async fn proxy_image(url: String) -> Result<Vec<u8>, String> {
-    let resp = reqwest::get(&url).await.map_err(|e| e.to_string())?;
-    let bytes = resp.bytes().await.map_err(|e| e.to_string())?;
-    Ok(bytes.to_vec())
-}
+// #[tauri::command] // 以下是之前为了将URL图片下载下来写的，不过后来发现是协议的问题，这个还有没有用已经忘记了，到时候测试一下
+// async fn proxy_image(url: String) -> Result<Vec<u8>, String> {
+//     let resp = reqwest::get(&url).await.map_err(|e| e.to_string())?;
+//     let bytes = resp.bytes().await.map_err(|e| e.to_string())?;
+//     Ok(bytes.to_vec())
+// }
 
 #[tauri::command]
 fn get_initial_data(state: tauri::State<AppState>) -> Result<Vec<FrontendOrigin>, String> {
@@ -112,117 +105,142 @@ fn get_initial_data(state: tauri::State<AppState>) -> Result<Vec<FrontendOrigin>
 
 #[tauri::command]
 fn create_origin(app_state: tauri::State<AppState>) -> Result<(), String> {
-    app_state.origins.lock().unwrap().push(Origin::new(app_state.monitor.clone()).map_err(|e| e.to_string())?);
+    let new_origin = Origin::new(app_state.monitor.clone()).map_err(|e| e.to_string())?;
+    let origin_id = new_origin.lock().unwrap().id;
+
+    {
+        let mut origins = app_state.origins.lock().unwrap();
+        origins.push(new_origin.clone());
+    }
+
+    {
+        let mut hash_origins = app_state.hash_origins.lock().unwrap();
+        hash_origins.insert(origin_id, new_origin);
+    }
+
     Ok(())
 }
 
 #[tauri::command]
 fn create_cluster(app_state: tauri::State<AppState>, origin_id: i64) -> Result<(), String> {
-    for origin in app_state.origins.lock().unwrap().iter() {
-        if origin.lock().unwrap().id == origin_id{
-            let new_cluster = Origin::create_cluster(origin.clone()).map_err(|e| e.to_string())?;
-            app_state.clusters.lock().unwrap().push(new_cluster.clone());
-            break;
-        }
+    let parent = {
+        let hash_origins = app_state.hash_origins.lock().unwrap();
+        hash_origins.get(&origin_id).cloned().ok_or("未找到Origin")?
+    };
+
+    let new_cluster = Origin::create_cluster(parent).map_err(|e| e.to_string())?;
+    let cluster_id = new_cluster.lock().unwrap().id;
+
+    {
+        let mut hash_clusters = app_state.hash_clusters.lock().unwrap();
+        hash_clusters.insert(cluster_id, new_cluster);
     }
+
     Ok(())
 }
 
 #[tauri::command]
 fn create_wave(app_state: tauri::State<AppState>, cluster_id: i64) -> Result<(), String> {
-    for cluster in app_state.clusters.lock().unwrap().iter() {
-        if cluster.lock().unwrap().id == cluster_id{
-            let new_wave = Cluster::create_wave(cluster.clone()).map_err(|e| e.to_string())?;
-            app_state.waves.lock().unwrap().push(new_wave.clone());
-            break;      
-        }
-    } 
+    let parent = {
+        let hash_clusters = app_state.hash_clusters.lock().unwrap();
+        hash_clusters.get(&cluster_id).cloned().ok_or("未找到Cluster")?
+    };
+
+    let new_wave = Cluster::create_wave(parent).map_err(|e| e.to_string())?;
+    let wave_id = {new_wave.lock().unwrap().id};
+    
+    {
+        let mut hash_waves = app_state.hash_waves.lock().unwrap();
+        hash_waves.insert(wave_id, new_wave);
+    }
     Ok(())
 }
 
 #[tauri::command]
 fn delete_origin(app_state: tauri::State<AppState>, origin_id: i64) -> Result<(), String> {
-    let mut pos = 0;  // 这里确信了前端返回的id值有效，因为前端的数据是基于后端的
-    for i in 0..app_state.origins.lock().unwrap().len() {
-        if app_state.origins.lock().unwrap()[i].lock().unwrap().id == origin_id {
-            pos = i;
-            break;
-        }
+
+    let to_be_delete = {
+        let hash_origins = app_state.hash_origins.lock().unwrap();
+        hash_origins.get(&origin_id).cloned().ok_or("Origin not found")?
+    };
+
+    {
+        let mut origins = app_state.origins.lock().unwrap();
+        origins.retain(|origin| origin.lock().unwrap().id != origin_id);
     }
-    println!("{}  {}", pos, app_state.origins.lock().unwrap()[pos].lock().unwrap().name);
-    let to_be_delete = app_state.origins.lock().unwrap().remove(pos);
+
+    {
+        let mut hash_origins = app_state.hash_origins.lock().unwrap();
+        hash_origins.remove(&origin_id);
+    }
+
     to_be_delete.lock().unwrap().delete().map_err(|e| e.to_string())?;
+
     Ok(())
 }
 
+// log: 要注意死锁问题!!
 #[tauri::command]
 fn delete_cluster(app_state: tauri::State<AppState>, cluster_id: i64) -> Result<(), String> {
-    let mut pos = 0;  // 这里又确信了前端返回的id值有效，因为前端的数据是基于后端的
-    for i in 0..app_state.clusters.lock().unwrap().len() {
-        if app_state.clusters.lock().unwrap()[i].lock().unwrap().id == cluster_id {
-            pos = i;
-            break;
-        }
+    // 1. 获取需要的信息，但不持有锁
+    let (parent, cluster_name) = {
+        let clusters = app_state.hash_clusters.lock().unwrap();
+        let cluster = clusters.get(&cluster_id).ok_or("查询失败")?;
+        let cluster_guard = cluster.lock().unwrap();
+        (cluster_guard.parent.clone(), cluster_guard.name.clone())
+    };
+
+    // 2. 从 hash_clusters 中删除
+    {
+        let mut clusters = app_state.hash_clusters.lock().unwrap();
+        clusters.remove(&cluster_id);
     }
-    let to_be_delete = app_state.clusters.lock().unwrap().remove(pos);
-    let parent = to_be_delete.lock().unwrap().parent.clone();
-    parent.lock().unwrap().delete_cluster(to_be_delete.lock().unwrap().name.clone())
-    .map_err(|e| e.to_string())?;
+
+    // 3. 调用 parent 的 delete_cluster 方法
+    parent.lock().unwrap().delete_cluster(cluster_name).map_err(|e| e.to_string())?;
     Ok(())
 }
 
 #[tauri::command]
 fn delete_wave(app_state: tauri::State<AppState>, wave_id: i64) -> Result<(), String> {
-    let mut pos = 0;  // 这里又双确信了前端返回的id值有效，因为前端的数据是基于后端的
-    for i in 0..app_state.waves.lock().unwrap().len() {
-        if app_state.waves.lock().unwrap()[i].lock().unwrap().id == wave_id {
-            pos = i;
-            break;
-        }
+    let (parent, wave_name) = {
+        let waves = app_state.hash_waves.lock().unwrap();
+        let wave = waves.get(&wave_id).ok_or("查询失败")?;
+        let wave_guard = wave.lock().unwrap();
+        (wave_guard.parent.clone(), wave_guard.title.clone())
+    };
+
+    {
+        let mut waves = app_state.hash_waves.lock().unwrap();
+        waves.remove(&wave_id);
     }
-    let to_be_delete = app_state.waves.lock().unwrap().remove(pos);
-    let parent = to_be_delete.lock().unwrap().parent.clone();
-    parent.lock().unwrap().delete_wave(to_be_delete.lock().unwrap().title.clone())
-    .map_err(|e| e.to_string())?;
+    
+    parent.lock().unwrap().delete_wave(wave_name).map_err(|e| e.to_string())?;
     Ok(())
 }
 
 #[tauri::command]
 fn rename_origin(app_state: tauri::State<AppState>, id: i64, change_name: String) -> Result<(), String> {
-    let mut pos = app_state.origins.lock().unwrap().len();
-    for i in 0..app_state.origins.lock().unwrap().len() {
-        if app_state.origins.lock().unwrap()[i].lock().unwrap().id == id {
-            pos = i;
-            break;
-        }
-    }
-    let _ = app_state.origins.lock().unwrap()[pos].lock().unwrap().change_name(change_name);
+    app_state.hash_origins.lock().unwrap()[&id].lock().unwrap().change_name(change_name).map_err(|e| e.to_string())?;
     Ok(())
 }
 
 #[tauri::command]
 fn rename_cluster(app_state: tauri::State<AppState>, id: i64, change_name: String) -> Result<(), String> {
-    let mut pos = app_state.clusters.lock().unwrap().len();
-    for i in 0..app_state.clusters.lock().unwrap().len() {
-        if app_state.clusters.lock().unwrap()[i].lock().unwrap().id == id {
-            pos = i;
-            break;
-        }
-    }
-    let _ = app_state.clusters.lock().unwrap()[pos].lock().unwrap().change_name(change_name);
+    app_state.hash_clusters.lock().unwrap()[&id].lock().unwrap().change_name(change_name).map_err(|e| e.to_string())?;
     Ok(())
 }
 // 来杯咖啡吗老师？来点Java
 #[tauri::command]
 fn rename_wave(app_state: tauri::State<AppState>, id: i64, change_name: String) -> Result<(), String> {
-    let mut pos = app_state.waves.lock().unwrap().len();
-    for i in 0..app_state.waves.lock().unwrap().len() {
-        if app_state.waves.lock().unwrap()[i].lock().unwrap().id == id {
-            pos = i;
-            break;
-        }
-    }
-    let _ = app_state.waves.lock().unwrap()[pos].lock().unwrap().change_name(change_name);
+    app_state.hash_waves.lock().unwrap()[&id].lock().unwrap().change_name(change_name).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+fn update_wave(app_state: tauri::State<AppState>, id: i64, new_content: String) -> Result<(), String> {
+    let target_wave = {app_state.hash_waves.lock().unwrap()[&id].clone()};
+    target_wave.lock().unwrap().update(new_content).map_err(|e| e.to_string())?;
     Ok(())
 }
 
@@ -256,6 +274,7 @@ fn main() -> Result<(), OriginMonitorError>{
         rename_origin,
         rename_cluster,
         rename_wave,
+        update_wave,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
