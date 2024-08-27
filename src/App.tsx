@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView, Theme } from "@blocknote/mantine";
 import ThemeToggle from './ThemeToggle';
@@ -6,9 +6,11 @@ import { FontToggle } from './FontToggle';
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import "./App.css";
+import "./Sidebar";
 
 import { SuggestionMenuController } from "@blocknote/react";
 import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
+import Sidebar from './Sidebar';
 
 const fonts = [
   { name: 'Default', label: '默认', value: 'var(--font-default)' },
@@ -20,6 +22,27 @@ const fonts = [
 // 定义一个扩展的 Theme 类型，确保包含 fontFamily
 interface ExtendedTheme extends Theme {
   fontFamily: string;
+}
+
+interface FrontendWave {
+  id: string;
+  name: string;
+  type: 'wave';
+  content: any;
+}
+
+interface FrontendCluster {
+  id: string;
+  name: string;
+  type: 'cluster';
+  children: FrontendWave[];
+}
+
+interface FrontendOrigin {
+  id: string;
+  name: string;
+  type: 'origin';
+  children: FrontendCluster[];
 }
 
 const defaultFontFamily = 'var(--font-default)';
@@ -98,6 +121,8 @@ export default function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
   const [currentTheme, setCurrentTheme] = useState<ExtendedTheme>(darkTheme as ExtendedTheme);
   const [currentFont, setCurrentFont] = useState(fonts[0].name);
+  const [sidebarData, setSidebarData] = useState<FrontendOrigin[]>([]);
+  const [error] = useState<string | null>(null);
 
   useEffect(() => {
     const updateTheme = () => {
@@ -107,7 +132,7 @@ export default function App() {
       
       setCurrentTheme(prevTheme => ({
         ...(isDarkMode ? darkTheme : lightTheme),
-        fontFamily: prevTheme.fontFamily || defaultFontFamily, // 确保 fontFamily 总是有值
+        fontFamily: prevTheme.fontFamily || defaultFontFamily,
       }));
     };
   
@@ -133,6 +158,19 @@ export default function App() {
         : themeMode
     );
   }, [themeMode]);
+
+  const fetchInitialData = useCallback(async () => {
+    try {
+      const data = await invoke('get_initial_data') as FrontendOrigin[];
+      setSidebarData(data);
+    } catch (err) {
+      console.error('Failed to fetch initial data:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchInitialData();
+  }, [fetchInitialData]);
 
   const editor = useCreateBlockNote({
     initialContent: [
@@ -199,24 +237,39 @@ export default function App() {
     }
   });
 
-
+  if (error) {
+    return (
+      <div>
+        Error: {error}
+        <button onClick={fetchInitialData}>Retry</button>
+      </div>
+    );
+  }
+  
   return (
     <div className={`app-container ${themeMode}`}>
       <div className="controls">
         <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} />
         <FontToggle currentFont={currentFont} setCurrentFont={setCurrentFont} fonts={fonts} />
       </div>
-      <div className="subtle-ocean-editor">
-        <BlockNoteView 
-          editor={editor} 
-          theme={currentTheme} 
-          data-font={currentFont}
-          slashMenu={false}
-        >
-          <SuggestionMenuController
-            triggerCharacter={"/"}
-          />
-        </BlockNoteView>
+      <div className="main-content">
+        <Sidebar 
+          data={sidebarData} 
+          onDataChange={setSidebarData}
+          refreshData={fetchInitialData}
+        />
+        <div className="subtle-ocean-editor">
+          <BlockNoteView 
+            editor={editor} 
+            theme={currentTheme} 
+            data-font={currentFont}
+            slashMenu={false}
+          >
+            <SuggestionMenuController
+              triggerCharacter={"/"}
+            />
+          </BlockNoteView>
+        </div>
       </div>
     </div>
   );
