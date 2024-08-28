@@ -345,16 +345,18 @@ export default function App() {
               <div className="word-count">字数: {wordCount}</div>
             </div>
             <div className="subtle-ocean-editor">
-              <BlockNoteView 
-                editor={editor} 
-                theme={currentTheme} 
-                data-font={currentFont}
-                slashMenu={false}
-              >
-                <SuggestionMenuController
-                  triggerCharacter={"/"}
-                />
-              </BlockNoteView>
+              
+                <BlockNoteView 
+                  editor={editor} 
+                  theme={currentTheme} 
+                  data-font={currentFont}
+                  slashMenu={false}
+                >
+                  <SuggestionMenuController
+                    triggerCharacter={"/"}
+                  />
+                </BlockNoteView>
+                
               <div>
                 <SaveNotification
                   isVisible={showSaveNotification}
