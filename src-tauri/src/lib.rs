@@ -8,6 +8,7 @@ use r2d2_sqlite::SqliteConnectionManager;
 use thiserror::Error;
 use log::{info, error};
 use serde_json;
+use std::fs;
 
 #[derive(Error, Debug)]
 pub enum OriginMonitorError {
@@ -27,10 +28,13 @@ type Result<T> = std::result::Result<T, OriginMonitorError>;
 // ===========数据库初始化============ //
 
 fn get_database_path() -> PathBuf {
-    dirs::data_local_dir()
+    let path = dirs::data_local_dir()
         .expect("无法找到本地数据路径")
-        .join("com.luwavic.luwav")
-        .join("luwav_notes.db")
+        .join("com.luwavic.luwav");
+
+    fs::create_dir_all(&path).expect("无法创建数据库目录");
+
+    path.join("luwav_notes.db")
 }
 
 fn create_connection_pool() -> Pool<SqliteConnectionManager> {
