@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Laptop } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 
-type ThemeMode = 'light' | 'dark' | 'system';
+type ThemeMode = 'light' | 'dark';
 
 interface ThemeToggleProps {
   themeMode: ThemeMode;
@@ -15,7 +15,6 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ themeMode, setThemeMode }) =>
     switch (mode) {
       case 'light': return <Sun className="icon" />;
       case 'dark': return <Moon className="icon" />;
-      case 'system': return <Laptop className="icon" />;
     }
   };
 
@@ -43,12 +42,6 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ themeMode, setThemeMode }) =>
         className={themeMode === 'dark' ? 'active' : ''}
       >
         <Moon className="icon" />
-      </button>
-      <button 
-        onClick={() => setThemeMode('system')} 
-        className={themeMode === 'system' ? 'active' : ''}
-      >
-        <Laptop className="icon" />
       </button>
     </div>
   );

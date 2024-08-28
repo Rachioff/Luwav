@@ -2,7 +2,6 @@ use rusqlite::params;
 // use serde::{Serialize, Deserialize};
 use lazy_static::lazy_static;
 use dirs;
-use serde_json::Value;
 use std::path::PathBuf;
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
@@ -167,6 +166,18 @@ impl OriginMonitor {
 
     pub fn create_wave(&self, cluster_id: i64) -> Result<(i64, String)> {
         let conn = self.pool.get()?;
+        let json_default = r#"
+            [
+            {
+                "type": "heading",
+                "content": "你好, 这里是Luwav"
+            },
+            {
+                "type": "paragraph",
+                "content": "单击以键入"
+            }
+            ]
+        "#.to_string();
 
         let new_name = self.generate_unique_name("untitled Wave",
         |name| {
@@ -179,8 +190,8 @@ impl OriginMonitor {
         })?;
 
         conn.execute(
-            "INSERT INTO waves (name, cluster_id) VALUES (?, ?)",
-            params![new_name, cluster_id],
+            "INSERT INTO waves (name, cluster_id, content) VALUES (?, ?, ?)",
+            params![new_name, cluster_id, json_default],
         )?;
         let id = conn.last_insert_rowid();
         info!("新建Wave: {} in cluster: {}", id, cluster_id);
@@ -302,14 +313,12 @@ impl OriginMonitor {
     }
 
     pub fn update_wave_content(&self, wave_id: i64, new_content: String) -> Result<()> {
-        let json_value: Value = serde_json::from_str(&new_content)
-            .map_err(|e| OriginMonitorError::InitError(format!("无效的JSON: {}", e)))?;
-        
+    
         let conn = self.pool.get()?;
 
         let rows_affected = conn.execute(
             "UPDATE waves SET content = ?1, updated_at = CURRENT_TIMESTAMP WHERE id = ?2", 
-            params![json_value.to_string(), wave_id]
+            params![new_content, wave_id]
         )?;
 
         if rows_affected == 0 {

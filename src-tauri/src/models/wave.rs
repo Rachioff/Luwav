@@ -1,4 +1,5 @@
 use chrono::{DateTime, Local};
+use rusqlite::params;
 use crate::models::cluster::Cluster;
 use app::{OriginMonitor, OriginMonitorError};
 use std::sync::{Arc, Mutex};
@@ -34,6 +35,7 @@ impl Wave {
             // shape: WaveShape::Ripple,
             parent: parent.clone(),
         }));
+        
         Ok(new_wave)
     }
 
@@ -54,6 +56,17 @@ impl Wave {
         self.updated_at = chrono::Local::now();
         self.monitor.update_wave_content(self.id, new_content)?;
         Ok(())
+    }
+
+    pub fn get_json_file(&self) -> Result<String, OriginMonitorError> {
+        let id = self.id;
+        let conn = self.monitor.pool.get()?;
+        let json_string = conn.query_row(
+            "SELECT content FROM waves WHERE id = ?", 
+            params![id], 
+            |row| row.get(0),
+        )?;
+        Ok(json_string)
     }
 }
 

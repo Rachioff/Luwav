@@ -19,6 +19,7 @@ mod init;
 use models::origin::Origin;
 use models::cluster::Cluster;
 use init::{AppState, convert_to_frontend_format, FrontendOrigin};
+use serde_json::Value;
 
 
 
@@ -238,10 +239,18 @@ fn rename_wave(app_state: tauri::State<AppState>, id: i64, change_name: String) 
 }
 
 #[tauri::command]
-fn update_wave(app_state: tauri::State<AppState>, id: i64, new_content: String) -> Result<(), String> {
+fn update_wave(app_state: tauri::State<AppState>, id: i64, new_content: Value) -> Result<(), String> {
     let target_wave = {app_state.hash_waves.lock().unwrap()[&id].clone()};
-    target_wave.lock().unwrap().update(new_content).map_err(|e| e.to_string())?;
+    target_wave.lock().unwrap().update(serde_json::to_string(&new_content).map_err(|e| e.to_string())?)
+    .map_err(|e| e.to_string())?;
     Ok(())
+}
+
+#[tauri::command]
+fn get_json_file(app_state: tauri::State<AppState>, id: i64) -> Result<Value, String> {
+    let target_wave = {app_state.hash_waves.lock().unwrap()[&id].clone()};
+    let ret_string = target_wave.lock().unwrap().get_json_file().map_err(|e| e.to_string())?;
+    Ok(serde_json::from_str(&ret_string).map_err(|e| e.to_string())?)
 }
 
 fn main() -> Result<(), OriginMonitorError>{
@@ -275,6 +284,7 @@ fn main() -> Result<(), OriginMonitorError>{
         rename_cluster,
         rename_wave,
         update_wave,
+        get_json_file,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

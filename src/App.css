@@ -799,3 +799,8 @@ html[data-theme="dark"] {
 .dark .sidebar-order {
   background-color: #2A2D2E;
 }
+
+.save-notification {
+  background-color: #75a1b6;
+  color: white;
+}

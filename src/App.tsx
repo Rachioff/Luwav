@@ -7,10 +7,12 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import "./App.css";
 import "./Sidebar";
+import { PartialBlock } from "@blocknote/core";
 
 import { SuggestionMenuController } from "@blocknote/react";
-import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/tauri';
 import Sidebar from './Sidebar';
+import SaveNotification from './SaveNotification';
 
 const fonts = [
   { name: 'Default', label: '默认', value: 'var(--font-default)' },
@@ -28,7 +30,6 @@ interface FrontendWave {
   id: string;
   name: string;
   type: 'wave';
-  content: any;
 }
 
 interface FrontendCluster {
@@ -115,20 +116,21 @@ const darkTheme: Theme = {
   fontFamily: defaultFontFamily,
 };
 
-type ThemeMode = 'light' | 'dark' | 'system';
+type ThemeMode = 'light' | 'dark';
 
 export default function App() {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
+  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [currentTheme, setCurrentTheme] = useState<ExtendedTheme>(darkTheme as ExtendedTheme);
   const [currentFont, setCurrentFont] = useState(fonts[0].name);
   const [sidebarData, setSidebarData] = useState<FrontendOrigin[]>([]);
   const [error] = useState<string | null>(null);
+  const [currentWaveId, setCurrentWaveId] = useState<string | null>(null);
+  const [showSaveNotification, setShowSaveNotification] = useState(false);
 
   useEffect(() => {
     const updateTheme = () => {
       const isDarkMode = 
-        themeMode === 'dark' || 
-        (themeMode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        themeMode === 'dark';
       
       setCurrentTheme(prevTheme => ({
         ...(isDarkMode ? darkTheme : lightTheme),
@@ -151,14 +153,6 @@ export default function App() {
     }));
   }, [currentFont]);
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 
-      themeMode === 'system' 
-        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        : themeMode
-    );
-  }, [themeMode]);
-
   const fetchInitialData = useCallback(async () => {
     try {
       const data = await invoke('get_initial_data') as FrontendOrigin[];
@@ -176,11 +170,11 @@ export default function App() {
     initialContent: [
       {
         type: "heading",
-        content: "Welcome to Your Adaptive Ocean-Inspired Editor",
+        content: "Hello! Luwav",
       },
       {
         type: "paragraph",
-        content: "This space adapts to your preference: light as a sunny beach, dark as the deep sea, or in harmony with your system."
+        content: "这里是欢迎界面"
       }
     ],
     // resolveFileUrl: async (url: string) => {
@@ -212,30 +206,55 @@ export default function App() {
     //     throw error;
     //   }
     // },
-    uploadFile: async (file: File) => {
-      try {
-        console.log(`Uploading file: ${file.name}`);
-        const fileBuffer = await file.arrayBuffer();
-        const fileArray = new Uint8Array(fileBuffer);
-        
-        const relativePath = await invoke('upload_and_backup_file', { 
-          file: Array.from(fileArray),
-          fileName: file.name
-        }) as string;
   
-        console.log(`File uploaded successfully. Relative path: ${relativePath}`);
-  
-        // 使用 convertFileSrc 将相对路径转换为可用的 URL
-        const url = convertFileSrc(relativePath);
-        console.log(`Converted URL: ${url}`);
-  
-        return url;
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        throw error;
-      }
-    }
   });
+
+  const handleSave = useCallback(async () => {
+    if (currentWaveId === null) {
+      console.warn('保存失败: 现在没有打开Wave');
+      return;
+    }
+
+    try {
+      const content = editor.topLevelBlocks;
+      await invoke('update_wave', {
+        id: Number(currentWaveId),
+        newContent: content
+      });
+      console.log("保存成功");
+      setShowSaveNotification(true);
+    } catch (error) {
+      console.error("保存失败")
+    }
+  }, [currentWaveId, editor])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault();  // 这个是不想让浏览器默认保存，不过桌面端无所谓了
+        handleSave();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleSave]);
+
+  const handleWaveSelect = useCallback(async (waveId: string) => {
+    try {
+      const jsonData = await invoke('get_json_file', { id: Number(waveId) }) as PartialBlock[];
+      console.log(jsonData);
+      
+      editor.replaceBlocks(editor.topLevelBlocks, jsonData);
+      setCurrentWaveId(waveId);
+    } catch (error) {
+      console.error('Wave文件获取失败: ', error);
+    }
+  }, [editor]);
+
 
   if (error) {
     return (
@@ -257,6 +276,7 @@ export default function App() {
           data={sidebarData} 
           onDataChange={setSidebarData}
           refreshData={fetchInitialData}
+          onWaveSelect={handleWaveSelect}
         />
         <div className="subtle-ocean-editor">
           <BlockNoteView 
@@ -269,6 +289,12 @@ export default function App() {
               triggerCharacter={"/"}
             />
           </BlockNoteView>
+          <div>
+            <SaveNotification
+              isVisible={showSaveNotification}
+              onHide={() => setShowSaveNotification(false)}
+            />
+          </div>
         </div>
       </div>
     </div>

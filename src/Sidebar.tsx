@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { FaFolder, FaFolderOpen, FaFile, FaChevronRight, FaChevronDown } from 'react-icons/fa';
 import { invoke } from '@tauri-apps/api/tauri';
 
 interface FrontendWave {
   id: string;
   name: string;
-  type: 'wave';
-  content: any;
+  type: 'wave'; 
 }
 
 interface FrontendCluster {
@@ -29,6 +28,7 @@ interface SidebarProps {
   data: FrontendOrigin[];
   onDataChange: (newData: FrontendOrigin[]) => void;
   refreshData: () => Promise<void>;
+  onWaveSelect: (waveId: string) => void;
 }
 
 interface ContextMenuProps {
@@ -74,11 +74,13 @@ const TreeItem: React.FC<{
   node: TreeNode; 
   level: number; 
   refreshData: () => Promise<void>;
-}> = ({ node, level, refreshData }) => {
+  onWaveSelect: (waveId: string) => void;
+}> = ({ node, level, refreshData, onWaveSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { contextMenu, setContextMenu } = useContextMenu();
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(node.name);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const toggleOpen = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -86,6 +88,15 @@ const TreeItem: React.FC<{
       setIsOpen(!isOpen);
     }
   };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (node.type === 'wave') {
+      onWaveSelect(node.id);
+    } else {
+      toggleOpen(e);
+    }
+  }
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -155,12 +166,19 @@ const TreeItem: React.FC<{
     }
   };
 
+  useEffect(() => {
+    if (isRenaming && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isRenaming]);
+
   return (
     <div>
       <div 
         className="tree-item" 
         style={{ paddingLeft: `${level * 20}px` }}
-        onClick={toggleOpen}
+        onClick={handleClick}
         onContextMenu={handleContextMenu}
       >
         {node.type !== 'wave' && (node as FrontendOrigin | FrontendCluster).children.length > 0 ? (
@@ -169,6 +187,7 @@ const TreeItem: React.FC<{
         {node.type === 'wave' ? <FaFile /> : (isOpen ? <FaFolderOpen /> : <FaFolder />)}
         {isRenaming ? (
           <input
+            ref={inputRef}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onBlur={handleRename}
@@ -191,6 +210,7 @@ const TreeItem: React.FC<{
               node={childNode} 
               level={level + 1} 
               refreshData={refreshData}
+              onWaveSelect={onWaveSelect}
             />
           ))}
         </div>
@@ -200,12 +220,8 @@ const TreeItem: React.FC<{
   );
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ data, refreshData }) => {
-  const [isMenuVisible, setMenuVisible] = useState(false);
+const Sidebar: React.FC<SidebarProps> = ({ data, refreshData, onWaveSelect }) => {
   const { contextMenu, setContextMenu } = useContextMenu();
-
-  const handleMouseEnter = () => setMenuVisible(true);
-  const handleMouseLeave = () => setMenuVisible(false);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -230,21 +246,6 @@ const Sidebar: React.FC<SidebarProps> = ({ data, refreshData }) => {
 
   return (
     <div className="sidebar" onContextMenu={handleContextMenu}>
-      <div className="sidebar-order">
-        <button
-          className="sidebar-order-selection"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          排列顺序
-          {isMenuVisible && (
-            <div className="dropdown-menu">
-              <button className="sidebar-order-button">按创建时间</button>
-              <button className="sidebar-order-button">按字典序</button>
-            </div>
-          )}
-        </button>
-      </div>
 
       {data.map(node => (
         <TreeItem 
@@ -252,6 +253,7 @@ const Sidebar: React.FC<SidebarProps> = ({ data, refreshData }) => {
           node={node} 
           level={0} 
           refreshData={refreshData}
+          onWaveSelect={onWaveSelect}
         />
       ))}
       {contextMenu && <ContextMenu {...contextMenu} />}

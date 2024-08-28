@@ -8,7 +8,6 @@ use crate::models::cluster::Cluster;
 use crate::models::wave::Wave;
 use app::OriginMonitor;
 use app::OriginMonitorError;
-use serde_json;
 use serde::{Serialize, Deserialize};
 use anyhow::Result;
 
@@ -18,7 +17,6 @@ pub struct FrontendWave {
     name: String,
     #[serde(rename = "type")]
     type_: String,
-    content: serde_json::Value,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -58,7 +56,6 @@ pub fn convert_to_frontend_format(app_state: &AppState) -> Result<Vec<FrontendOr
                     id: wave_guard.id.to_string(),
                     name: wave_guard.title.clone(),
                     type_: "wave".to_string(),
-                    content: serde_json::json!({}),
                 }
             }).collect();
 
