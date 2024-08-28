@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "luwav",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "tauri": {
     "allowlist": {
@@ -77,7 +77,13 @@
       }
     },
     "security": {
-      "csp": "default-src 'self'; img-src 'self' asset: https: http: data:; style-src 'self' 'unsafe-inline'"
+      "csp": "default-src 'self'; img-src 'self' asset: https: http: data:; style-src 'self' 'unsafe-inline'",
+      "dangerousRemoteDomainIpcAccess": [
+        {
+          "windows": [],
+          "domain": "file://"
+        }
+      ]
     },
     "updater": {
       "active": false

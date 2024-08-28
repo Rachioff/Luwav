@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaFolder, FaFolderOpen, FaFile, FaChevronRight, FaChevronDown } from 'react-icons/fa';
+import { FaFolder, FaFolderOpen, FaFile, FaChevronRight, FaChevronDown, FaChevronLeft, FaChevronCircleRight } from 'react-icons/fa';
 import { invoke } from '@tauri-apps/api/tauri';
+import { showModal } from './ConfirmDialogProps';
 
 interface FrontendWave {
   id: string;
@@ -29,6 +30,8 @@ interface SidebarProps {
   onDataChange: (newData: FrontendOrigin[]) => void;
   refreshData: () => Promise<void>;
   onWaveSelect: (waveId: string) => void;
+  isCollapsed: boolean;
+  onToggle: () => void;
 }
 
 interface ContextMenuProps {
@@ -59,11 +62,30 @@ const useContextMenu = () => {
 const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, options }) => (
   <div 
     className="context-menu" 
-    style={{ position: 'fixed', top: y, left: x, backgroundColor: 'white', border: '1px solid black', zIndex: 1000 }}
+    style={{ 
+      position: 'fixed', 
+      top: y, 
+      left: x, 
+      backgroundColor: 'white', 
+      zIndex: 1000, 
+      borderRadius: '5px', 
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)', 
+      padding: '5px' 
+    }}
     onClick={(e) => e.stopPropagation()}
   >
     {options.map((option, index) => (
-      <div key={index} onClick={option.action} style={{ padding: '5px', cursor: 'pointer' }}>
+      <div 
+        key={index} 
+        onClick={option.action} 
+        style={{ 
+          padding: '5px', 
+          cursor: 'pointer',
+          transition: 'background-color 0.1s ease', // 添加平滑过渡效果
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'} // 鼠标悬浮时变色
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'} // 鼠标移开时恢复原色
+      >
         {option.label}
       </div>
     ))}
@@ -141,7 +163,9 @@ const TreeItem: React.FC<{
   };
 
   const handleDelete = async (nodeToDelete: TreeNode) => {
+    setContextMenu(null);
     try {
+      if (await showModal() == false) return;
       if (nodeToDelete.type === 'origin') {
         await invoke('delete_origin', { originId: Number(nodeToDelete.id) });
       } else if (nodeToDelete.type === 'cluster') {
@@ -153,7 +177,6 @@ const TreeItem: React.FC<{
     } catch (error) {
       console.error('Failed to delete item:', error);
     }
-    setContextMenu(null);
   };
 
   const handleRename = async () => {
@@ -177,7 +200,7 @@ const TreeItem: React.FC<{
     <div>
       <div 
         className="tree-item" 
-        style={{ paddingLeft: `${level * 20}px` }}
+        style={{ paddingLeft: `${level * 20}px`, cursor: 'pointer', transition: 'background-color 0.1s ease' }}
         onClick={handleClick}
         onContextMenu={handleContextMenu}
       >
@@ -220,19 +243,21 @@ const TreeItem: React.FC<{
   );
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ data, refreshData, onWaveSelect }) => {
+const Sidebar: React.FC<SidebarProps> = ({ data, refreshData, onWaveSelect, isCollapsed, onToggle }) => {
   const { contextMenu, setContextMenu } = useContextMenu();
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    setContextMenu({
-      x: e.clientX,
-      y: e.clientY,
-      options: [
-        { label: '新建Origin', action: () => handleAddOrigin() }
-      ]
-    });
-  }, [setContextMenu]);
+    if (!isCollapsed) {
+      setContextMenu({
+        x: e.clientX,
+        y: e.clientY,
+        options: [
+          { label: '新建Origin', action: () => handleAddOrigin() }
+        ]
+      });
+    }
+  }, [setContextMenu, isCollapsed]);
 
   const handleAddOrigin = async () => {
     try {
@@ -245,17 +270,21 @@ const Sidebar: React.FC<SidebarProps> = ({ data, refreshData, onWaveSelect }) =>
   };
 
   return (
-    <div className="sidebar" onContextMenu={handleContextMenu}>
-
-      {data.map(node => (
-        <TreeItem 
-          key={node.id} 
-          node={node} 
-          level={0} 
-          refreshData={refreshData}
-          onWaveSelect={onWaveSelect}
-        />
-      ))}
+    <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`} onContextMenu={handleContextMenu}>
+      <button className="sidebar-toggle" onClick={onToggle}>
+        {isCollapsed ? <FaChevronCircleRight /> : <FaChevronLeft />}
+      </button>
+      <div className="sidebar-content">
+        {!isCollapsed && data.map(node => (
+          <TreeItem 
+            key={node.id} 
+            node={node} 
+            level={0} 
+            refreshData={refreshData}
+            onWaveSelect={onWaveSelect}
+          />
+        ))}
+      </div>
       {contextMenu && <ContextMenu {...contextMenu} />}
     </div>
   );

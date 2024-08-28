@@ -7,10 +7,10 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import "./App.css";
 import "./Sidebar";
-import { PartialBlock } from "@blocknote/core";
+import { PartialBlock, Block } from "@blocknote/core";
 
 import { SuggestionMenuController } from "@blocknote/react";
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
 import Sidebar from './Sidebar';
 import SaveNotification from './SaveNotification';
 
@@ -126,6 +126,13 @@ export default function App() {
   const [error] = useState<string | null>(null);
   const [currentWaveId, setCurrentWaveId] = useState<string | null>(null);
   const [showSaveNotification, setShowSaveNotification] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false); // 侧边栏是否折叠
+  const [breadcrumb, setBreadcrumb] = useState<string[]>([]);
+  const [wordCount, setWordCount] = useState(0);
+
+  const toggleSidebar = () => {  // 切换侧边栏
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   useEffect(() => {
     const updateTheme = () => {
@@ -177,36 +184,29 @@ export default function App() {
         content: "这里是欢迎界面"
       }
     ],
-    // resolveFileUrl: async (url: string) => {
-    //   try {
-    //     const response = await fetch(url);
-    //     const blob = await response.blob();
-    //     const file = new File([blob], "image.jpg", { type: blob.type });
-    //     const fileBuffer = await file.arrayBuffer();
-    //     const fileArray = new Uint8Array(fileBuffer);
-    //     const relativePath = await invoke('upload_and_backup_file', { 
-    //       file: Array.from(fileArray),
-    //       fileName: file.name
-    //     }) as string;
-    //     console.log(`File uploaded successfully. Relative path: ${relativePath}`);
-  
-    //     // 使用 convertFileSrc 将相对路径转换为可用的 URL
-    //     const url_ = convertFileSrc(relativePath);
-    //     console.log(`Converted URL: ${url_}`);
+    uploadFile: async (file: File) => {
+      try {
+        console.log(`Uploading file: ${file.name}`);
+        const fileBuffer = await file.arrayBuffer();
+        const fileArray = new Uint8Array(fileBuffer);
         
-    //     // 尝试加载图片
-    //     const img = new Image();
-    //     img.onload = () => console.log("Image loaded successfully");
-    //     img.onerror = (e) => console.error("Error loading image:", e);
-    //     img.src = url_;
+        const relativePath = await invoke('upload_and_backup_file', { 
+          file: Array.from(fileArray),
+          fileName: file.name
+        }) as string;
   
-    //     return url_;
-    //   } catch (error) {
-    //     console.error('Error saving image:', error);
-    //     throw error;
-    //   }
-    // },
+        console.log(`File uploaded successfully. Relative path: ${relativePath}`);
   
+        // 使用 convertFileSrc 将相对路径转换为可用的 URL
+        const url = convertFileSrc(relativePath);
+        console.log(`Converted URL: ${url}`);
+  
+        return url;
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+      }
+    }
   });
 
   const handleSave = useCallback(async () => {
@@ -243,19 +243,6 @@ export default function App() {
     };
   }, [handleSave]);
 
-  const handleWaveSelect = useCallback(async (waveId: string) => {
-    try {
-      const jsonData = await invoke('get_json_file', { id: Number(waveId) }) as PartialBlock[];
-      console.log(jsonData);
-      
-      editor.replaceBlocks(editor.topLevelBlocks, jsonData);
-      setCurrentWaveId(waveId);
-    } catch (error) {
-      console.error('Wave文件获取失败: ', error);
-    }
-  }, [editor]);
-
-
   if (error) {
     return (
       <div>
@@ -264,39 +251,119 @@ export default function App() {
       </div>
     );
   }
+
+    // 更新面包屑
+    const updateBreadcrumb = useCallback((waveId: string) => {
+      const origin = sidebarData.find(o => o.children.some(c => c.children.some(w => w.id === waveId)));
+      const cluster = origin?.children.find(c => c.children.some(w => w.id === waveId));
+      const wave = cluster?.children.find(w => w.id === waveId);
   
-  return (
-    <div className={`app-container ${themeMode}`}>
-      <div className="controls">
-        <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} />
-        <FontToggle currentFont={currentFont} setCurrentFont={setCurrentFont} fonts={fonts} />
-      </div>
-      <div className="main-content">
-        <Sidebar 
-          data={sidebarData} 
-          onDataChange={setSidebarData}
-          refreshData={fetchInitialData}
-          onWaveSelect={handleWaveSelect}
-        />
-        <div className="subtle-ocean-editor">
-          <BlockNoteView 
-            editor={editor} 
-            theme={currentTheme} 
-            data-font={currentFont}
-            slashMenu={false}
-          >
-            <SuggestionMenuController
-              triggerCharacter={"/"}
-            />
-          </BlockNoteView>
-          <div>
-            <SaveNotification
-              isVisible={showSaveNotification}
-              onHide={() => setShowSaveNotification(false)}
-            />
+      if (origin && cluster && wave) {
+        setBreadcrumb([origin.name, cluster.name, wave.name]);
+      }
+    }, [sidebarData]);
+  
+    // 更新字数统计
+    const extractTextFromBlocks = (blocks: Block[]): string => {
+      return blocks.map(block => {
+        if (block.content && Array.isArray(block.content)) {
+          return block.content.map(item => {
+            // 根据实际情况处理 item
+            if (typeof item === 'string') {
+              return item;
+            } else if ('type' in item && 'text' in item) {
+              return item.text;
+            }
+            return '';
+          }).join('');
+        }
+        return '';
+      }).join('\n').trim();
+    };
+    
+    const updateWordCount = useCallback(() => {
+      const textContent = extractTextFromBlocks(editor.topLevelBlocks);
+      
+      // 计算单词数和字符数
+      // 英文单词用正则表达式匹配
+      const wordCount = (textContent.match(/\b\w+\b/g) || []).length;
+      
+      // 计算中文字符数
+      const chineseCharCount = (textContent.match(/[\u4e00-\u9fa5]/g) || []).length;
+      
+      // 将两者合计为总字数
+      const totalCount = wordCount + chineseCharCount;
+      
+      setWordCount(totalCount);
+    }, [editor]);
+    
+    useEffect(() => {
+      updateWordCount();  // 初始化时调用一次字数统计
+      
+      // 使用类型断言来确保 unsubscribe 是一个函数
+      const unsubscribe = editor.onEditorContentChange(updateWordCount) as (() => void) | undefined;
+    
+      return () => {
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();  // 确保 unsubscribe 是一个函数
+        }
+      };
+    }, [editor, updateWordCount]);
+    
+    const handleWaveSelect = useCallback(async (waveId: string) => {
+      try {
+        const jsonData = await invoke('get_json_file', { id: Number(waveId) }) as PartialBlock[];
+        console.log(jsonData);
+    
+        editor.replaceBlocks(editor.topLevelBlocks, jsonData);
+        setCurrentWaveId(waveId);
+        updateBreadcrumb(waveId);
+        updateWordCount();  // 切换Wave时更新字数
+      } catch (error) {
+        console.error('Wave文件获取失败: ', error);
+      }
+    }, [editor, updateBreadcrumb, updateWordCount]);
+  
+    return (
+      <div className={`app-container ${themeMode}`}>
+        <div className="controls">
+          <ThemeToggle themeMode={themeMode} setThemeMode={setThemeMode} />
+          <FontToggle currentFont={currentFont} setCurrentFont={setCurrentFont} fonts={fonts} />
+        </div>
+        <div className="main-content">
+          <Sidebar 
+            data={sidebarData} 
+            onDataChange={setSidebarData}
+            refreshData={fetchInitialData}
+            onWaveSelect={handleWaveSelect}
+            isCollapsed={isSidebarCollapsed}
+            onToggle={toggleSidebar}
+          />
+          <div className="editor-container">
+            <div className="header-bar">
+              <div className="breadcrumb">{breadcrumb.join(' > ')}</div>
+              <div className="word-count">字数: {wordCount}</div>
+            </div>
+            <div className="subtle-ocean-editor">
+              <BlockNoteView 
+                editor={editor} 
+                theme={currentTheme} 
+                data-font={currentFont}
+                slashMenu={false}
+              >
+                <SuggestionMenuController
+                  triggerCharacter={"/"}
+                />
+              </BlockNoteView>
+              <div>
+                <SaveNotification
+                  isVisible={showSaveNotification}
+                  onHide={() => setShowSaveNotification(false)}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }

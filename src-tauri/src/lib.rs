@@ -29,7 +29,7 @@ type Result<T> = std::result::Result<T, OriginMonitorError>;
 fn get_database_path() -> PathBuf {
     dirs::data_local_dir()
         .expect("无法找到本地数据路径")
-        .join("Luwav")
+        .join("com.luwavic.luwav")
         .join("luwav_notes.db")
 }
 
