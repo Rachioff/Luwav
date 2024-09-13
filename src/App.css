@@ -1,0 +1,1132 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 更新 HTML 和 body 的背景色样式 */
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+
+body {
+  scrollbar-width: thin; /* Firefox 使用 thin 或 auto */
+  scrollbar-color: #3b4a64 #dbdee6; /* 滑块颜色和轨道颜色 */
+}
+
+body[data-theme="dark"] {
+  scrollbar-width: thin; /* Firefox 使用 thin 或 auto */
+  scrollbar-color: #57606f #2f3542; /* 滑块颜色和轨道颜色 */
+}
+
+/* 默认（浅色）主题 */
+html {
+  /* background-color: #EEF2F6; */
+  color: #37474F;
+}
+
+/* 暗色主题 */
+html[data-theme="dark"] {
+  background-color: #1A2327;
+  color: #E0E0E0;
+}
+
+#root {
+  min-height: 100vh;
+  min-width: none;
+}
+
+.subtle-ocean-editor {
+  min-width: 90%;
+  min-height: 85%;
+  padding: 16px;
+  font-family: 'Inter', sans-serif;
+  /* background-color: #FAFBFC; */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(84, 110, 122, 0.1);
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+  background-color: #dae1f1;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(84, 110, 122, 0.1);
+  overflow: auto;
+}
+
+/* Editor container */
+.subtle-ocean-editor .bn-container{
+  min-width: 520px;
+  /* background: #f5f7fa; */
+  box-shadow: 0 2px 4px rgba(233, 229, 229, 0.05);
+  border-radius: 6px;
+}
+
+.subtle-ocean-editor .bn-editor {
+  padding: 40px;
+}
+
+/* Block styles */
+.subtle-ocean-editor .bn-block {
+  transition: background-color 0.2s ease, transform 0.2s ease, padding 0.2s ease, margin 0.2s ease;
+  border-radius: 0.5em;
+  padding: 0.25em 0.25em; /* 增加内边距 */
+  margin:  -0.25em; /* 负外边距来抵消增加的宽度 */
+}
+
+.subtle-ocean-editor .bn-block:hover {
+  background-color: rgba(254, 254, 254, 0.05);
+  border-radius: 0.5em;
+  /* transform: translateX(2px); */
+}
+
+.subtle-ocean-editor .bn-block:focus-within {
+  background-color: rgba(46, 50, 52, 0.492);
+}
+
+/* Heading styles */
+.subtle-ocean-editor [data-content-type='heading'][data-level='1'] {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: #455A64;
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+}
+
+.subtle-ocean-editor [data-content-type='heading'][data-level='2'] {
+  font-size: 1.875em;
+  font-weight: 600;
+  color: #546E7A;
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+}
+
+.subtle-ocean-editor [data-content-type='heading'][data-level='3'] {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #607D8B;
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+}
+
+/* Paragraph styles */
+.subtle-ocean-editor [data-content-type='paragraph'] {
+  font-size: 1em;
+  line-height: 1.5;
+  color: #37474F;
+}
+
+/* Inline styles */
+.subtle-ocean-editor strong {
+  font-weight: 600;
+  color: #455A64;
+}
+
+.subtle-ocean-editor em {
+  font-style: italic;
+  color: #546E7A;
+}
+
+.subtle-ocean-editor code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  background: rgba(120, 144, 156, 0.1);
+  color: #455A64;
+  border-radius: 4px;
+  font-size: 85%;
+  padding: 0.2em 0.4em;
+}
+
+a {
+  color: #3072b8;
+  text-decoration: underline;
+}
+
+/* Side menu button styles */
+  
+  .subtle-ocean-editor .bn-side-menu .mantine-ActionIcon-root:hover {
+    background-color: #999da12e;
+    border-radius: 9px;
+    color: #6d838e;
+  }
+  
+  /* Ensure SVG icons inside buttons are visible */
+  .subtle-ocean-editor .bn-side-menu .mantine-ActionIcon-icon svg {
+    fill: currentColor;
+    color: #96a1a7;
+  }
+  
+  /* Adjust side menu container */
+  .subtle-ocean-editor .bn-side-menu {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+  }
+  
+  /* Make side menu more visible when hovering over blocks */
+  .subtle-ocean-editor .bn-block:hover .bn-side-menu {
+    opacity: 0;
+  }
+  
+  /* Add a subtle transition for smoother appearance */
+  .subtle-ocean-editor .bn-side-menu {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  /* Ensure buttons are visible even when not hovering */
+  .subtle-ocean-editor .bn-side-menu .bn-button,
+  .subtle-ocean-editor .bn-side-menu .mantine-ActionIcon-root {
+    opacity: 0.7;
+    color: #B0BEC5;
+  }
+  
+  .subtle-ocean-editor .bn-side-menu:hover .bn-button,
+  .subtle-ocean-editor .bn-side-menu:hover .mantine-ActionIcon-root {
+    opacity: 1;
+  }
+
+/* Toolbar */
+.subtle-ocean-editor .bn-toolbar {
+  border: 1px solid #ECEFF1;
+  box-shadow: 0 2px 4px rgba(84, 110, 122, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #F5F7F9;
+}
+
+.subtle-ocean-editor .bn-toolbar button {
+  border-radius: 14px;
+  margin: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.subtle-ocean-editor .bn-toolbar button:hover {
+  background-color: rgba(85, 99, 106, 0.1);
+}
+
+/* Placeholder text */
+
+.subtle-ocean-editor [data-placeholder]:empty:before {
+  color: #78909C; /* 调整为更深的灰色 */
+}
+
+/* 为暗色模式添加不同的颜色 */
+.dark .subtle-ocean-editor [data-placeholder]:empty:before {
+  color: #90A4AE; /* 在暗色模式下使用更亮的颜色 */
+}
+
+/* Focus styles */
+.subtle-ocean-editor .bn-block:focus-within {
+  background-color: rgba(120, 144, 156, 0.05);
+  
+}
+
+/* Custom scrollbar */
+.subtle-ocean-editor ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.subtle-ocean-editor ::-webkit-scrollbar-track {
+  background: #EEF2F6;
+}
+
+.subtle-ocean-editor ::-webkit-scrollbar-thumb {
+  background: #B0BEC5;
+  border-radius: 3px;
+}
+
+.subtle-ocean-editor ::-webkit-scrollbar-thumb:hover {
+  background: #90A4AE;
+}
+
+/* Additional subtle ocean-inspired elements */
+.subtle-ocean-editor::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: linear-gradient(135deg, rgba(84, 110, 122, 0.05) 0%, rgba(176, 190, 197, 0.05) 100%);
+  z-index: -1;
+  border-radius: 12px;
+  opacity: 0.6;
+}
+
+.subtle-ocean-editor::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="%23FFFFFF" width="100" height="100"/><path d="M0 0L100 100ZM100 0L0 100Z" stroke="%23ECEFF1" stroke-width="0.5"/></svg>'); */
+  opacity: 0.3;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 文本选择样式 */
+.subtle-ocean-editor *::selection {
+    background-color: rgba(120, 144, 156, 0.3) !important; /* 灰蓝色，带有透明度 */
+    color: #37474F !important; /* 深色文本，确保在选中时可读 */
+  }
+
+/* 保留之前的所有样式 */
+
+/* 新增主题切换相关样式 */
+.app-container {
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .app-container.light {
+    background-color: #EEF2F6;
+    color: #37474F;
+  }
+  
+  .app-container.dark {
+    background-color: #1A2327;
+    color: #E0E0E0;
+  }
+
+  /* 深色模式下的样式调整 */
+  .dark .subtle-ocean-editor {
+    background-color: #263238;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dark .subtle-ocean-editor .bn-container {
+    background: #263238;
+  }
+  
+  .dark .subtle-ocean-editor [data-content-type='heading'][data-level='1'],
+  .dark .subtle-ocean-editor [data-content-type='heading'][data-level='2'],
+  .dark .subtle-ocean-editor [data-content-type='heading'][data-level='3'],
+  .dark .subtle-ocean-editor [data-content-type='paragraph'],
+  .dark .subtle-ocean-editor [data-content-type='bulletListItem'],
+  .dark .subtle-ocean-editor [data-content-type='numberedListItem'] {
+    color: #E0E0E0;
+  }
+  
+  .dark .subtle-ocean-editor .bn-toolbar {
+    background-color: #37474F;
+    border-color: #455A64;
+  }
+  
+  .dark .subtle-ocean-editor .bn-toolbar button:hover {
+    background-color: rgba(176, 190, 197, 0.1);
+  }
+  
+  .dark .subtle-ocean-editor ::-webkit-scrollbar-track {
+    background: #37474F;
+  }
+  
+  .dark .subtle-ocean-editor ::-webkit-scrollbar-thumb {
+    background: #546E7A;
+  }
+  
+  .dark .subtle-ocean-editor ::-webkit-scrollbar-thumb:hover {
+    background: #78909C;
+  }
+  
+  /* 文本选择样式调整 */
+  .dark .subtle-ocean-editor *::selection {
+    background-color: rgba(176, 190, 197, 0.3) !important;
+    color: #E0E0E0 !important;
+  }
+  
+  /* 确保编辑器容器不会被背景色覆盖 */
+  .subtle-ocean-editor {
+    background-color: #FAFBFC;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .dark .subtle-ocean-editor {
+    background-color: #263238;
+  }
+  
+/* 统一 ThemeToggle 和 FontToggle 样式 */
+.theme-toggle,
+.font-toggle {
+    position: fixed;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3px;
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.theme-toggle {
+  top: 50px;
+  right: 20px;
+}
+
+.font-toggle {
+  top: 90px;
+  right: 20px;
+}
+
+.theme-toggle:hover,
+.font-toggle:hover {
+    transform: translateX(-5px);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle button,
+.font-toggle-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.theme-toggle button:hover,
+.font-toggle-button:hover {
+    background-color: rgba(120, 144, 156, 0.2);
+    transform: scale(1.1);
+}
+
+.theme-toggle .icon,
+.font-toggle .icon {
+    width: 20px;
+    height: 20px;
+    color: currentColor;
+}
+
+.theme-toggle button.active {
+  background-color: rgba(120, 144, 156, 0.3);
+}
+
+.theme-toggle.expanded {
+  background-color: rgba(255, 255, 255, 0.2);
+  gap: 5px;
+}
+
+.theme-toggle button.active {
+  background-color: rgba(120, 144, 156, 0.3);
+}
+
+/* 展开和收起的动画效果 */
+.theme-toggle:not(.expanded) button:not(.active) {
+  width: 0;
+  padding: 0;
+  opacity: 0;
+  transform: scale(0) rotate(-180deg);
+}
+
+.theme-toggle.expanded button {
+  width: 30px;
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.theme-toggle.expanded button {
+  animation: bounce 0.5s ease infinite;
+}
+
+.font-toggle-label {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.font-toggle:hover .font-toggle-label {
+    opacity: 1;
+    max-width: 150px;
+    padding: 0px 10px;
+}
+
+/* 暗色模式适配 */
+.dark .theme-toggle,
+.dark .font-toggle {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark .theme-toggle button,
+.dark .font-toggle-button {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* 在现有的 App.css 中添加或修改以下样式 */
+
+.controls {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  overflow: hidden;
+}
+
+/* 在现有的 App.css 中更新以下样式 */
+/* 字体特定样式 */
+.font-default {
+  font-family: var(--font-default);
+}
+
+.font-kai {
+  font-family: var(--font-kai);
+}
+
+.font-imitationsong {
+  font-family: var(--font-imitationsong);
+}
+
+.font-song {
+  font-family: var(--font-song);
+}
+
+.font-toggle-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: #37474F;
+  cursor: pointer;
+  text-align: left;
+  transition: all 1s ease;
+}
+
+.font-toggle-label {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  cursor: pointer;
+  padding: 0px 0px;
+  margin-left: 0px;
+}
+
+.font-toggle:hover .font-toggle-label {
+  opacity: 1;
+  max-width: 150px;
+}
+
+.font-toggle-dropdown {
+  position: absolute;
+  top: calc(100% + 0px);
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 150px;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  pointer-events: none;
+}
+
+.font-toggle-dropdown.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.font-toggle-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: #37474F;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.font-toggle-dropdown button:hover {
+  background-color: rgba(120, 144, 156, 0.1);
+}
+
+@keyframes swapOut {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+@keyframes swapIn {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.swap-out {
+  animation: swapOut 0.3s forwards;
+}
+
+.swap-in {
+  animation: swapIn 0.3s forwards;
+}
+
+/* 暗色模式适配 */
+
+.dark .font-toggle-dropdown {
+  background-color: rgba(38, 50, 56, 0.9);
+}
+
+.dark .font-toggle-dropdown button {
+  color: #E0E0E0;
+}
+
+.dark .font-toggle-dropdown button:hover {
+  background-color: rgba(176, 190, 197, 0.1);
+}
+
+/* 应用字体到编辑器 */
+.subtle-ocean-editor {
+  font-family: var(--font-default);
+}
+/* 确保编辑器内容继承字体 */
+.subtle-ocean-editor .bn-container,
+.subtle-ocean-editor .bn-editor {
+  font-family: inherit;
+}
+
+/* 确保所有文本元素都继承字体 */
+.subtle-ocean-editor [data-content-type],
+.subtle-ocean-editor p,
+.subtle-ocean-editor h1,
+.subtle-ocean-editor h2,
+.subtle-ocean-editor h3,
+.subtle-ocean-editor li {
+  font-family: inherit;
+}
+
+
+/* ... fonts ... */
+
+@font-face {
+  font-family: 'Kai';
+  src: url('src/assets/fonts/FangZhengKaiTiJianTi-1.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'ImitationSong';
+  src: url('src/assets/fonts/ZhuqueFangsong-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Song';
+  src: url('/src/assets/fonts/SourceHanSerifSC-Regular.otf') format('opentype');
+}
+
+
+/* 字体切换样式 */
+.bn-container[data-font="Default"] .bn-editor * {
+  font-family: var(--font-default);
+}
+
+.bn-container[data-font="Kai"] .bn-editor * {
+  font-family: var(--font-kai);
+  letter-spacing: -0.2px;
+}
+
+.bn-container[data-font="ImitationSong"] .bn-editor * {
+  font-family: var(--font-imitationsong);
+  letter-spacing: -0.1px;
+}
+
+.bn-container[data-font="Song"] .bn-editor * {
+  font-family: var(--font-song);
+}
+
+/* 确保字体变量在全局范围内可用 */
+:root {
+  --font-default: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-kai: 'Kai', var(--font-default);
+  --font-imitationsong: 'ImitationSong', var(--font-default);
+  --font-song: 'Song', var(--font-default);
+}
+
+/* 粗体样式 */
+.subtle-ocean-editor strong {
+  font-weight: 600;
+  color: inherit; /* 使用继承的颜色 */
+}
+
+/* 斜体样式 */
+.subtle-ocean-editor em {
+  font-style: italic;
+  text-shadow: 1px 1px 1px rgba(74, 72, 72, 0.362); /* 添加微妙的文字阴影 */
+  color: inherit; /* 使用继承的颜色 */
+}
+.dark .subtle-ocean-editor em {
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.636); /* 添加微妙的文字阴影 */
+}
+
+/* 下划线样式 */
+.subtle-ocean-editor u {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px; 
+}
+
+/* 暗色模式下的样式调整 */
+.dark .subtle-ocean-editor strong,
+.dark .subtle-ocean-editor em,
+.dark .subtle-ocean-editor u {
+  color: #E0E0E0; /* 暗色模式下的文本颜色 */
+}
+
+/* === 列表 === */
+/* 基本列表样式 */
+.subtle-ocean-editor .bn-block-content[data-content-type="bulletListItem"] {
+  position: relative;
+  padding-left: 1.3em;
+}
+
+.subtle-ocean-editor .bn-block-content[data-content-type="bulletListItem"]::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #455A64;
+}
+
+.subtle-ocean-editor .bn-block-group [data-content-type="bulletListItem"]::before {
+  font: 1em sans-serif;
+  font-size: 1.9em;
+}
+
+.subtle-ocean-editor .bn-block-group .bn-block-group .bn-block-content[data-content-type="bulletListItem"]::before {
+  font-size: 1.2em;
+}
+
+/* 暗色模式适配 */
+.dark .subtle-ocean-editor .bn-block-content[data-content-type="bulletListItem"]::before {
+  color: #B0BEC5;
+}
+
+.bn-block-content[data-content-type="paragraph"][data-is-empty-and-focused="true"] .bn-inline-content::before {
+  content: "Type something...";
+  color: #78909C; /* 浅色主题下的颜色 */
+  font-style: italic;
+  opacity: 0.7;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* 新增的侧边栏样式 */
+.main-content {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  position: relative;
+  padding: 10px;
+  padding-top: 50px;
+  width: 250px;
+  background-color: #e2edff;
+  color: #266b9a;
+  transition: width 0.3s ease;
+  overflow-y: auto;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(206, 207, 232, 0.771);
+  /* box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px; */
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.search-container {
+  position: absolute;
+  left: 10px;
+  top: 3.5%;
+  transform: translateY(-50%);
+  color: #888;
+  border-radius: 4px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 5px 5px 5px 30px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 2px;
+  right: 0px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 25px;
+  color: #266b9a;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  background-color: #266b9a;
+  border-radius: 50%;
+  color: #e2edff;
+}
+
+.sidebar.collapsed {
+  width: 50px;
+}
+
+.sidebar-content {
+  transition: opacity 0.3s ease;
+  width: 100%;
+}
+
+.sidebar.collapsed .sidebar-content {
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar .context-menu {
+  position: 'fixed';
+  top: y;
+  left: x;
+  background-color: 'white';
+  z-index: 1000;
+  border-radius: '5px';
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+
+  padding: '5px'
+}
+.sidebar-content-option {
+  padding: '50px';
+  cursor: 'pointer';
+}
+
+.sidebar-order {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background-color: #75a1b6;
+  border-bottom: 1px solid rgba(206, 207, 232, 0.771);
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.sidebar-order-selection {
+  position: relative;
+  background-color: #007bff;
+  color: white;
+  border: 1px solid rgba(206, 207, 232, 0.771);
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.sidebar-order-button {
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.sidebar-order-buttom:hover {
+  background-color: #f0f0f0;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.sidebar-order-button.active {
+  background-color: #007bff;
+  color: white;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.tree-item {
+  padding: 4px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.tree-item:hover {
+  background-color: #afdeee;
+  border-radius: 5px;
+}
+
+.tree-item svg {
+  margin-right: 5px;
+}
+
+.node-name {
+  margin-left: 5px;
+}
+
+.subtle-ocean-editor {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+/* 暗色模式适配 */
+.dark .sidebar {
+  background-color: #252526;
+  color: #CCCCCC;
+}
+
+.dark .context-menu {
+  color: #273442;
+}
+
+.dark .sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.dark .search-container {
+  position: absolute;
+  left: 10px;
+  top: 3.5%;
+  transform: translateY(-50%);
+  background-color: #141b2c;
+  border-radius: 4px;
+}
+
+.dark .search-input {
+  width: 100%;
+  padding: 5px 5px 5px 30px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #1b1e25;
+}
+
+.dark .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9d98b6;
+}
+
+.dark .tree-item:hover {
+  background-color: #2A2D2E;
+}
+
+.dark .sidebar-order {
+  background-color: #2A2D2E;
+}
+
+.save-notification {
+  background-color: #75a1b6;
+  color: white;
+}
+
+.main-content {
+  display: flex;
+  height: 100vh;
+}
+
+.editor-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 顶部长条样式 */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f5f7fa;
+  border-bottom: 1px solid #ddd;
+  height: 40px; /* 固定高度 */
+}
+
+/* 面包屑导航样式 */
+.breadcrumb {
+  font-size: 14px;
+  color: #455A64;
+}
+
+/* 字数统计样式 */
+.word-count {
+  font-size: 14px;
+  color: #455A64;
+}
+
+.subtle-ocean-editor {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* 确保 BlockNoteView 填满容器 */
+.subtle-ocean-editor .bn-container {
+  height: 90%;
+}
+
+/* 暗色模式适配 */
+.dark .header-bar {
+  background-color: #263238;
+  border-bottom: 1px solid #37474F;
+}
+
+.dark .breadcrumb, .dark .word-count {
+  color: #E0E0E0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* 初始透明度 */
+    animation: fadeIn 0.2s forwards; /* 淡入动画 */
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px; /* 设置固定宽度 */
+    height: 150px; /* 增加高度以适应内容 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.modal-message {
+    margin-bottom: 20px; /* 增加下边距以分隔消息和按钮 */
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 60%; /* 让按钮容器占满 modal-content 的宽度 */
+}
+
+.modal-close-button-confirm,
+.modal-close-button-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 10px; /* 给按钮增加左右间距 */
+}
+
+.modal-close-button-confirm {
+    background-color: #db5a51; /* 红色确认按钮 */
+    color: rgb(247, 247, 247);
+}
+
+.modal-close-button-cancel {
+    background-color: #b7caed; /* 绿色取消按钮 */
+    color: rgb(247, 247, 247);
+}
+
+
+
+
+
+
+.dark.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* 更暗的背景遮罩 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* 初始透明度 */
+    animation: fadeIn 0.2s forwards; /* 淡入动画 */
+}
+
+.dark.modal-content {
+    background: #333; /* 深色背景 */
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px; /* 设置固定宽度 */
+    height: 150px; /* 增加高度以适应内容 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #f0f0f0; /* 浅色文本 */
+}
+
+.dark.modal-message {
+    margin-bottom: 20px; /* 增加下边距以分隔消息和按钮 */
+}
+
+.dark.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 60%; /* 让按钮容器占满 modal-content 的宽度 */
+}
+
+.dark.modal-close-button-confirm,
+.dark.modal-close-button-cancel {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 10px; /* 给按钮增加左右间距 */
+}
+
+.dark.modal-close-button-confirm {
+    background-color: #bf7b76; /* 红色确认按钮 */
+    color: rgb(67, 63, 63);
+}
+
+.dark.modal-close-button-cancel {
+    background-color: #b7caed; /* 绿色取消按钮 */
+    color: rgb(94, 81, 81);
+}
