@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaFolder, FaFolderOpen, FaFile, FaChevronRight, FaChevronDown, FaChevronLeft, FaChevronCircleRight } from 'react-icons/fa';
+import { FaFolder, FaFolderOpen, FaFile, FaChevronRight, FaChevronDown, FaChevronLeft, FaChevronCircleRight, FaSearch } from 'react-icons/fa';
 import { invoke } from '@tauri-apps/api/tauri';
 import { showModal } from './ConfirmDialogProps';
 
@@ -245,6 +245,7 @@ const TreeItem: React.FC<{
 
 const Sidebar: React.FC<SidebarProps> = ({ data, refreshData, onWaveSelect, isCollapsed, onToggle }) => {
   const { contextMenu, setContextMenu } = useContextMenu();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -269,13 +270,48 @@ const Sidebar: React.FC<SidebarProps> = ({ data, refreshData, onWaveSelect, isCo
     setContextMenu(null);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filterData = (nodes: TreeNode[], term: string): TreeNode[] => {
+    return nodes.filter(node => {
+      if (node.name.toLowerCase().includes(term.toLowerCase())) {
+        return true;
+      }
+      if ('children' in node) {
+        const filteredChildren = filterData(node.children, term);
+        if (filteredChildren.length > 0) {
+          return { ...node, children: filteredChildren };
+        }
+      }
+      return false;
+    });
+  };
+
+  const filteredData = searchTerm ? filterData(data, searchTerm) : data;
+
   return (
     <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`} onContextMenu={handleContextMenu}>
-      <button className="sidebar-toggle" onClick={onToggle}>
-        {isCollapsed ? <FaChevronCircleRight /> : <FaChevronLeft />}
-      </button>
+      <div className="sidebar-header">
+        {!isCollapsed && (
+          <div className="search-container">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="search-input"
+            />
+          </div>
+        )}
+        <button className="sidebar-toggle" onClick={onToggle}>
+          {isCollapsed ? <FaChevronCircleRight /> : <FaChevronLeft />}
+        </button>
+      </div>
       <div className="sidebar-content">
-        {!isCollapsed && data.map(node => (
+        {!isCollapsed && filteredData.map(node => (
           <TreeItem 
             key={node.id} 
             node={node} 

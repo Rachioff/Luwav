@@ -5,6 +5,7 @@
 
 use std::fs;
 use app::OriginMonitorError;
+use rusqlite::params;
 use tauri::Manager;
 use std::path::Path;
 use std::path::PathBuf;
@@ -253,8 +254,32 @@ fn get_json_file(app_state: tauri::State<AppState>, id: i64) -> Result<Value, St
     Ok(serde_json::from_str(&ret_string).map_err(|e| e.to_string())?)
 }
 
+#[tauri::command]
+fn save_settings(app_state: tauri::State<AppState>, theme: String, font: String) -> Result<(), String>{
+    let conn = app_state.monitor.pool.get().map_err(|e| e.to_string())?;
+    conn.execute(
+        "INSERT OR REPLACE INTO settings (id, theme, font) VALUES (1, ?1, ?2)", 
+        params![theme, font]
+    ).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+fn get_settings(app_state: tauri::State<AppState>) -> Result<(String, String), String> {
+    let conn = app_state.monitor.pool.get().map_err(|e| e.to_string())?;
+    conn.query_row(
+        "SELECT theme, font FROM settings WHERE id = 1", 
+        [], 
+        |row| {
+            Ok((row.get(0)?, row.get(1)?))
+        }
+    ).map_err(|e| e.to_string())
+}
+
 fn main() -> Result<(), OriginMonitorError>{
     let app_state = AppState::new().expect("初始化失败");
+    let conn = app_state.monitor.pool.get()?;
+    conn.execute("INSERT OR IGNORE INTO settings (id) VALUES (1)", [])?;
 
     tauri::Builder::default()
     .manage(app_state)
@@ -285,6 +310,8 @@ fn main() -> Result<(), OriginMonitorError>{
         rename_wave,
         update_wave,
         get_json_file,
+        save_settings,
+        get_settings,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

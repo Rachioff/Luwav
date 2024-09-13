@@ -92,6 +92,11 @@ impl OriginMonitor {
             CREATE INDEX IF NOT EXISTS idx_clusters_origin_id ON clusters(origin_id);
             CREATE INDEX IF NOT EXISTS idx_waves_cluster_id ON waves(cluster_id);
             CREATE INDEX IF NOT EXISTS idx_waves_content ON waves((json_extract(content, '$.text')));
+            CREATE TABLE IF NOT EXISTS settings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                theme TEXT NOT NULL DEFAULT 'light',
+                font TEXT NOT NULL DEFAULT 'Default'
+            );
             COMMIT;
         ").map_err(|e| OriginMonitorError::InitError(format!("无法初始化数据库: {}", e)))?;
 
